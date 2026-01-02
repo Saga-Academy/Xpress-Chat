@@ -2,23 +2,36 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Xpress Chat: Galactic Terminal</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Xpress Chat | Galactic Gateway</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Rajdhani:wght@500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@400;700&display=swap" rel="stylesheet">
 </head>
+
 <body class="login-theme">
 
-<!-- Login Container -->
-<div class="login-container">
-  <h2>Xpress Chat: Galactic Terminal</h2>
-  <input id="phone" placeholder="+63XXXXXXXXXX">
-  <input id="avatar" placeholder="Avatar URL (optional)">
-  <div id="recaptcha"></div>
-  <button onclick="sendOTP()">Request Access Code</button>
+<div class="overlay"></div>
 
-  <input id="otp" placeholder="Enter Access Code">
-  <button onclick="verifyOTP()">Verify Identity</button>
+<div class="crawl">
+  <div class="crawl-text">
+    <p>Episode X</p>
+    <p>THE CHAT AWAKENS</p>
+    <p>It is a period of connectivity.</p>
+    <p>Rebel pilots have established a secure line across the galaxy.</p>
+    <p>Your mission begins now.</p>
+  </div>
+</div>
+
+<div class="login-container">
+  <h2>GALACTIC TERMINAL</h2>
+
+  <input type="email" id="email" placeholder="Pilot Email">
+  <input type="password" id="password" placeholder="Holo-Key (Password)">
+  <input type="text" id="avatar" placeholder="Avatar URL (Optional)">
+
+  <button onclick="handleSignUp()">REGISTER PILOT</button>
+  <button class="secondary" onclick="handleLogin()">AUTHORIZE ENTRY</button>
 </div>
 
 <script type="module" src="js/auth.js"></script>
