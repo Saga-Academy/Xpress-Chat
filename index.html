@@ -4,6 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Galactic Comm-Link</title>
+<script>
+  // 🔐 Security Guard: Redirect to login if no session is found
+  if (!localStorage.getItem("uid") || !localStorage.getItem("user")) {
+    window.location.href = "login.html";
+  }
+</script>
 <link rel="stylesheet" href="css/style.css">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500&display=swap" rel="stylesheet">
 </head>
@@ -16,6 +22,7 @@
   <div class="theme-controls">
     <button onclick="switchSide('light')">JEDI</button>
     <button onclick="switchSide('dark')">SITH</button>
+    <button onclick="logout()" style="background: var(--sith-red); color: white; margin-left: 10px;">ABANDON</button>
   </div>
   <span id="onlineCount"></span>
 </div>
