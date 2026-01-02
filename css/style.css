@@ -1,162 +1,64 @@
-/* Star Wars Galactic UI Variables */
 :root {
-  --force-cyan: #00e5ff;    /* Jedi Glow */
-  --sith-red: #ff0037;      /* Sith Glow */
-  --death-star: #1a1b1e;    /* Dark Panel */
-  --space-black: #080808;   /* Background */
-  --vader-white: #e0e0e0;   /* Text */
-  --holonet-gold: #ffe81f;  /* Star Wars Yellow */
+  --space-black: #080808;
+  --death-star-panel: #1a1a1a;
+  --lightsaber-color: #00e5ff;
+  --sith-red: #ff0037;
+  --force-gold: #ffe81f;
+  --vader-white: #e0e0e0;
 }
 
 body {
   margin: 0;
-  font-family: 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Rajdhani', sans-serif;
   background: var(--space-black);
   color: var(--vader-white);
-  /* Optional: Subtle star field effect */
-  background-image: radial-gradient(white, rgba(255,255,255,.2) 1px, transparent 20px);
-  background-size: 100px 100px;
-}
-
-.login {
-  text-align: center;
-  padding: 40px;
-  border: 1px solid var(--force-cyan);
-  margin: 50px auto;
-  width: 80%;
-  box-shadow: 0 0 20px rgba(0, 229, 255, 0.2);
-}
-
-input {
-  width: 90%;
-  padding: 12px;
-  margin: 6px;
-  background: #222;
-  border: 1px solid #444;
-  color: white;
-  border-radius: 4px;
-}
-
-input:focus {
-  outline: none;
-  border-color: var(--force-cyan);
-  box-shadow: 0 0 8px var(--force-cyan);
-}
-
-button {
-  padding: 12px;
-  background: var(--force-cyan);
-  color: #000;
-  border: none;
-  font-weight: bold;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-button:hover {
-  background: var(--vader-white);
-  box-shadow: 0 0 15px var(--force-cyan);
+  overflow-x: hidden;
 }
 
 #chatHeader {
-  background: var(--death-star);
-  color: var(--holonet-gold);
-  padding: 10px;
+  background: var(--death-star-panel);
+  /* Top padding for mobile status bar/notch clearance */
+  padding: 50px 15px 15px 15px; 
+  padding-top: calc(env(safe-area-inset-top) + 40px);
   display: flex;
   justify-content: space-between;
-  border-bottom: 2px solid var(--force-cyan);
-  text-transform: uppercase;
-}
-
-#onlineUsers {
-  display: flex;
-  overflow-x: auto;
-  background: #111;
-  padding: 10px;
-  border-bottom: 1px solid #333;
-}
-
-.user {
-  text-align: center;
-  margin-right: 15px;
-  font-size: 11px;
-  color: var(--force-cyan);
-}
-
-.user img {
-  width: 45px;
-  height: 45px;
-  border-radius: 50%;
-  border: 2px solid var(--force-cyan);
+  align-items: center;
+  border-bottom: 2px solid var(--lightsaber-color);
+  box-shadow: 0 0 15px var(--lightsaber-color);
+  font-family: 'Orbitron', sans-serif;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 
 #messages {
-  padding: 10px;
-  height: 60vh;
-  overflow: auto;
-  background: rgba(0, 0, 0, 0.8);
+  height: calc(100vh - 220px);
+  padding: 15px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .msg {
+  max-width: 80%;
+  margin-bottom: 12px;
   padding: 10px;
-  border-radius: 4px; /* More angular, techy look */
-  margin: 8px;
-  max-width: 75%;
+  border-radius: 4px;
   display: flex;
-  gap: 8px;
-  align-items: flex-start;
-  border: 1px solid transparent;
+  gap: 10px;
 }
 
-.msg img {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  filter: grayscale(0.5);
-}
-
-/* My Messages: Blue "Force" Theme */
-.me {
-  background: rgba(0, 229, 255, 0.1);
-  color: #fff;
-  margin-left: auto;
-  border-right: 4px solid var(--force-cyan);
-}
-
-/* Other Messages: Gray "Empire" Theme */
-.other {
-  background: #222;
-  color: #ccc;
-  border-left: 4px solid #666;
-}
-
-.reactions span {
-  font-size: 12px;
-  margin-right: 6px;
-  color: var(--holonet-gold);
-}
-
-#replyBox {
-  background: #2a2a2a;
-  padding: 8px;
-  border-left: 4px solid var(--holonet-gold);
-  font-size: 0.9em;
-}
+.me { align-self: flex-end; background: rgba(0, 229, 255, 0.1); border-right: 4px solid var(--lightsaber-color); }
+.other { align-self: flex-start; background: #222; border-left: 4px solid #555; }
 
 .inputBar {
+  position: fixed;
+  bottom: 0; width: 100%;
   display: flex;
-  background: var(--death-star);
-  padding: 5px;
+  background: var(--death-star-panel);
+  padding: 10px;
+  border-top: 1px solid #333;
 }
 
-.inputBar input {
-  flex: 1;
-  border: none;
-  background: transparent;
-}
-
-.inputBar button {
-  border-radius: 0;
-}
+input { flex: 1; background: #000; border: 1px solid #444; color: white; padding: 10px; margin-right: 10px; }
+button { background: var(--lightsaber-color); color: black; border: none; padding: 10px 20px; font-family: 'Orbitron', sans-serif; font-weight: bold; }
