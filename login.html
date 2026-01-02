@@ -3,20 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Login</title>
+<title>Galactic Login</title>
 <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="login">
+<body class="login-theme">
+<div class="login-container">
+  <h2>Xpress Chat: Galactic Terminal</h2>
+  <input id="phone" placeholder="+63XXXXXXXXXX">
+  <input id="avatar" placeholder="Avatar URL (optional)">
+  <div id="recaptcha"></div>
+  <button onclick="sendOTP()">Request Access Code</button>
 
-<h2>Xpress Chat</h2>
-
-<input id="phone" placeholder="+63XXXXXXXXXX">
-<input id="avatar" placeholder="Avatar URL (optional)">
-<div id="recaptcha"></div>
-<button onclick="sendOTP()">Send OTP</button>
-
-<input id="otp" placeholder="Enter OTP">
-<button onclick="verifyOTP()">Verify</button>
+  <input id="otp" placeholder="Enter Access Code">
+  <button onclick="verifyOTP()">Verify Identity</button>
+</div>
 
 <script type="module" src="js/auth.js"></script>
 </body>
