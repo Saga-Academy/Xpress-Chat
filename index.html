@@ -3,28 +3,42 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Chat</title>
+<title>Galactic Comm-Link</title>
 <link rel="stylesheet" href="css/style.css">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500&display=swap" rel="stylesheet">
 </head>
-<body>
+<body class="star-wars-theme">
+
+<div class="hologram-effect"></div>
 
 <div id="chatHeader">
-  <span>Room: <b id="roomName"></b></span>
+  <div class="header-left">
+    <span class="signal-icon">⚡</span>
+    <span>Sector: <b id="roomName"></b></span>
+  </div>
   <span id="onlineCount"></span>
 </div>
 
-<div id="onlineUsers"></div>
+<div id="onlineUsers">
+  </div>
 
 <div id="replyBox" hidden>
-Replying to: <span id="replyText"></span>
-<button onclick="cancelReply()">✕</button>
+  <div class="reply-content">
+    <small>INTERCEPTING SIGNAL:</small>
+    <span id="replyText"></span>
+  </div>
+  <button class="close-btn" onclick="cancelReply()">✕</button>
 </div>
 
-<div id="messages"></div>
+<div id="messages">
+  </div>
 
 <div class="inputBar">
-<input id="msg" placeholder="Message">
-<button onclick="send()">Send</button>
+  <input id="msg" placeholder="Transmitting encrypted data..." autocomplete="off">
+  <button id="sendBtn" onclick="send()">
+    <span class="btn-glow"></span>
+    SEND
+  </button>
 </div>
 
 <script type="module" src="js/chat.js"></script>
