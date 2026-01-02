@@ -1,42 +1,33 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Viber Clone</title>
-    <link rel="stylesheet" href="css/style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Chat</title>
+<link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <div class="container">
-        <div class="sidebar">
-            <div class="profile">
-                <img src="assets/avatar.png" class="avatar" alt="Avatar">
-                <span id="current-username"></span>
-                <button id="dark-toggle">Toggle Dark</button>
-            </div>
-            <input type="text" id="search" placeholder="Search users">
-            <div class="chat-list" id="chat-list"></div>
-        </div>
-        <div class="chat-panel" id="chat-panel" style="display: none;">
-            <div class="chat-header">
-                <span id="chat-user"></span>
-                <span id="online-status">online</span>
-            </div>
-            <div class="message-area" id="messages"></div>
-            <div class="input-bar">
-                <div id="reply-preview" style="display: none;"></div>
-                <input type="text" id="message-input" placeholder="Type a message">
-                <button id="emoji-btn">😀</button>
-                <div id="emoji-picker" style="display: none;"></div>
-                <button id="attach-btn">+</button>
-                <button id="send-btn">Send</button>
-            </div>
-        </div>
-    </div>
-    <script src="js/storage.js"></script>
-    <script src="js/auth.js"></script>
-    <script src="js/websocket-mock.js"></script>
-    <script src="js/chat.js"></script>
-</body>
 
+<div id="chatHeader">
+  <span>Room: <b id="roomName"></b></span>
+  <span id="onlineCount"></span>
+</div>
+
+<div id="onlineUsers"></div>
+
+<div id="replyBox" hidden>
+Replying to: <span id="replyText"></span>
+<button onclick="cancelReply()">✕</button>
+</div>
+
+<div id="messages"></div>
+
+<div class="inputBar">
+<input id="msg" placeholder="Message">
+<button onclick="send()">Send</button>
+</div>
+
+<script type="module" src="js/chat.js"></script>
+<script type="module" src="js/presence.js"></script>
+</body>
 </html>
