@@ -1,4 +1,4 @@
-import { db, ref, push, onChildAdded, runTransaction } from "./firebase.js";
+import { db, ref, push, onChildAdded } from "./firebase.js";
 
 const user = localStorage.getItem("user");
 const avatar = localStorage.getItem("avatar");
@@ -24,9 +24,7 @@ onChildAdded(msgRef, s => {
   const m = s.val();
   const d = document.createElement("div");
   d.className = "msg " + (m.user === user ? "me" : "other");
-  d.innerHTML = `
-    <img src="${m.avatar}">
-    <div>${m.text}</div>`;
+  d.innerHTML = `<img src="${m.avatar}" style="width:30px;height:30px;border-radius:50%"> <div>${m.text}</div>`;
   box.appendChild(d);
   box.scrollTop = box.scrollHeight;
 });
