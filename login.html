@@ -1,18 +1,23 @@
-<!-- login.html -->
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Viber Clone - Login</title>
-    <link rel="stylesheet" href="css/style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Login</title>
+<link rel="stylesheet" href="css/style.css">
 </head>
-<body>
-    <div class="login-container">
-        <input type="text" id="username" placeholder="Enter username">
-        <button onclick="login()">Login</button>
-    </div>
-    <script src="js/storage.js"></script>
-    <script src="js/auth.js"></script>
+<body class="login">
+
+<h2>Viber Clone</h2>
+
+<input id="phone" placeholder="+63XXXXXXXXXX">
+<input id="avatar" placeholder="Avatar URL (optional)">
+<div id="recaptcha"></div>
+<button onclick="sendOTP()">Send OTP</button>
+
+<input id="otp" placeholder="Enter OTP">
+<button onclick="verifyOTP()">Verify</button>
+
+<script type="module" src="js/auth.js"></script>
 </body>
 </html>
