@@ -1,25 +1,31 @@
-import { auth, RecaptchaVerifier, signInWithPhoneNumber, db, ref, set } from "./firebase.js";
+import { auth, db, ref, set, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "./firebase.js";
 
-let confirmation;
-const phoneInput = document.getElementById("phone");
-const otpInput = document.getElementById("otp");
-const avatarInput = document.getElementById("avatar");
+window.handleSignUp = () => {
+  const email = document.getElementById("email").value;
+  const pass = document.getElementById("password").value;
+  const avatar = document.getElementById("avatar").value || `https://api.dicebear.com/7.x/bottts/svg?seed=${email}`;
 
-window.recaptchaVerifier = new RecaptchaVerifier("recaptcha", { size: "invisible" }, auth);
-
-window.sendOTP = () => {
-  signInWithPhoneNumber(auth, phoneInput.value, window.recaptchaVerifier)
-    .then(r => { confirmation = r; alert("Access Code Transmitted"); })
-    .catch(err => alert("Transmission Failed: " + err.message));
+  createUserWithEmailAndPassword(auth, email, pass)
+    .then(res => saveSession(res.user, email, avatar))
+    .catch(err => alert(err.message));
 };
 
-window.verifyOTP = () => {
-  confirmation.confirm(otpInput.value).then(res => {
-    const avatar = avatarInput.value || `https://api.dicebear.com/7.x/bottts/svg?seed=${phoneInput.value}`;
-    localStorage.setItem("uid", res.user.uid);
-    localStorage.setItem("user", phoneInput.value);
-    localStorage.setItem("avatar", avatar);
-    set(ref(db, "users/" + res.user.uid), { user: phoneInput.value, avatar, online: true });
-    location.href = "index.html";
-  });
+window.handleLogin = () => {
+  const email = document.getElementById("email").value;
+  const pass = document.getElementById("password").value;
+
+  signInWithEmailAndPassword(auth, email, pass)
+    .then(res => {
+      const avatar = localStorage.getItem("avatar") || `https://api.dicebear.com/7.x/bottts/svg?seed=${email}`;
+      saveSession(res.user, email, avatar);
+    })
+    .catch(err => alert(err.message));
 };
+
+function saveSession(user, email, avatar) {
+  localStorage.setItem("uid", user.uid);
+  localStorage.setItem("user", email);
+  localStorage.setItem("avatar", avatar);
+  set(ref(db, "users/" + user.uid), { email, avatar, online: true });
+  location.href = "index.html";
+}
