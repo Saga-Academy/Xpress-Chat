@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Xpress Chat</title>
+<title>Galactic Comm-Link</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Rajdhani:wght@500&display=swap" rel="stylesheet">
 
 <style>
@@ -39,7 +39,7 @@
     font-family: 'Rajdhani', sans-serif;
     background: var(--bg-primary);
     color: var(--text-primary);
-    height: 90vh;
+    height: 100vh;
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -270,23 +270,29 @@
       window.location.href = "login.html";
     }
 
+    // Functions will be overridden by chat.js
     function switchSide(side) {
       document.body.dataset.theme = side;
     }
 
     function logout() {
       localStorage.removeItem("uid");
+      localStorage.removeItem("userEmail");
       window.location.href = "login.html";
     }
 
-    // Placeholder for send() - your chat.js will override this
     function send() {
-      alert("Send function called (implement in chat.js)");
+      // Will be overridden by chat.js
+      console.log("Send function placeholder");
     }
   </script>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-analytics-compat.js"></script>
 
   <script type="module" src="js/chat.js"></script>
 </body>
 </html>
-
-
