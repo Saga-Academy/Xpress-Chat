@@ -12,33 +12,26 @@
 <div class="hologram-effect"></div>
 
 <div id="chatHeader">
-  <div class="header-left">
-    <span class="signal-icon">⚡</span>
-    <span>Sector: <b id="roomName"></b></span>
+  <span>Sector: <b id="roomName"></b></span>
+  <div class="theme-controls">
+    <button onclick="switchSide('light')">JEDI</button>
+    <button onclick="switchSide('dark')">SITH</button>
   </div>
   <span id="onlineCount"></span>
 </div>
 
-<div id="onlineUsers">
-  </div>
+<div id="onlineUsers"></div>
 
 <div id="replyBox" hidden>
-  <div class="reply-content">
-    <small>INTERCEPTING SIGNAL:</small>
-    <span id="replyText"></span>
-  </div>
-  <button class="close-btn" onclick="cancelReply()">✕</button>
+  Replying to: <span id="replyText"></span>
+  <button onclick="cancelReply()">✕</button>
 </div>
 
-<div id="messages">
-  </div>
+<div id="messages"></div>
 
 <div class="inputBar">
   <input id="msg" placeholder="Transmitting encrypted data..." autocomplete="off">
-  <button id="sendBtn" onclick="send()">
-    <span class="btn-glow"></span>
-    SEND
-  </button>
+  <button id="sendBtn" onclick="send()">SEND</button>
 </div>
 
 <script type="module" src="js/chat.js"></script>
