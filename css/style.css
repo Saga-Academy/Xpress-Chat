@@ -1,64 +1,162 @@
-body{margin:0;font-family:sans-serif;background:#eee}
-.login{text-align:center;padding:40px}
-
-input{width:90%;padding:12px;margin:6px}
-button{padding:12px;background:#7b3fe4;color:#fff;border:none}
-
-#chatHeader{
-  background:#7b3fe4;
-  color:#fff;
-  padding:10px;
-  display:flex;
-  justify-content:space-between
+/* Star Wars Galactic UI Variables */
+:root {
+  --force-cyan: #00e5ff;    /* Jedi Glow */
+  --sith-red: #ff0037;      /* Sith Glow */
+  --death-star: #1a1b1e;    /* Dark Panel */
+  --space-black: #080808;   /* Background */
+  --vader-white: #e0e0e0;   /* Text */
+  --holonet-gold: #ffe81f;  /* Star Wars Yellow */
 }
 
-#onlineUsers{
-  display:flex;
-  overflow-x:auto;
-  background:#ddd;
-  padding:6px
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Roboto, sans-serif;
+  background: var(--space-black);
+  color: var(--vader-white);
+  /* Optional: Subtle star field effect */
+  background-image: radial-gradient(white, rgba(255,255,255,.2) 1px, transparent 20px);
+  background-size: 100px 100px;
 }
 
-.user{
-  text-align:center;
-  margin-right:10px;
-  font-size:12px
+.login {
+  text-align: center;
+  padding: 40px;
+  border: 1px solid var(--force-cyan);
+  margin: 50px auto;
+  width: 80%;
+  box-shadow: 0 0 20px rgba(0, 229, 255, 0.2);
 }
 
-.user img{
-  width:40px;
-  height:40px;
-  border-radius:50%
+input {
+  width: 90%;
+  padding: 12px;
+  margin: 6px;
+  background: #222;
+  border: 1px solid #444;
+  color: white;
+  border-radius: 4px;
 }
 
-#messages{
-  padding:10px;
-  height:60vh;
-  overflow:auto
+input:focus {
+  outline: none;
+  border-color: var(--force-cyan);
+  box-shadow: 0 0 8px var(--force-cyan);
 }
 
-.msg{
-  padding:10px;
-  border-radius:12px;
-  margin:6px;
-  max-width:70%;
-  display:flex;
-  gap:8px;
-  align-items:flex-start
+button {
+  padding: 12px;
+  background: var(--force-cyan);
+  color: #000;
+  border: none;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: 0.3s;
 }
 
-.msg img{
-  width:32px;
-  height:32px;
-  border-radius:50%
+button:hover {
+  background: var(--vader-white);
+  box-shadow: 0 0 15px var(--force-cyan);
 }
 
-.me{background:#7b3fe4;color:#fff;margin-left:auto}
-.other{background:#fff}
+#chatHeader {
+  background: var(--death-star);
+  color: var(--holonet-gold);
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 2px solid var(--force-cyan);
+  text-transform: uppercase;
+}
 
-.reactions span{font-size:12px;margin-right:6px}
+#onlineUsers {
+  display: flex;
+  overflow-x: auto;
+  background: #111;
+  padding: 10px;
+  border-bottom: 1px solid #333;
+}
 
-#replyBox{background:#ccc;padding:6px}
+.user {
+  text-align: center;
+  margin-right: 15px;
+  font-size: 11px;
+  color: var(--force-cyan);
+}
 
-.inputBar{display:flex}
-.inputBar input{flex:1}
+.user img {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  border: 2px solid var(--force-cyan);
+}
+
+#messages {
+  padding: 10px;
+  height: 60vh;
+  overflow: auto;
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.msg {
+  padding: 10px;
+  border-radius: 4px; /* More angular, techy look */
+  margin: 8px;
+  max-width: 75%;
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  border: 1px solid transparent;
+}
+
+.msg img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  filter: grayscale(0.5);
+}
+
+/* My Messages: Blue "Force" Theme */
+.me {
+  background: rgba(0, 229, 255, 0.1);
+  color: #fff;
+  margin-left: auto;
+  border-right: 4px solid var(--force-cyan);
+}
+
+/* Other Messages: Gray "Empire" Theme */
+.other {
+  background: #222;
+  color: #ccc;
+  border-left: 4px solid #666;
+}
+
+.reactions span {
+  font-size: 12px;
+  margin-right: 6px;
+  color: var(--holonet-gold);
+}
+
+#replyBox {
+  background: #2a2a2a;
+  padding: 8px;
+  border-left: 4px solid var(--holonet-gold);
+  font-size: 0.9em;
+}
+
+.inputBar {
+  display: flex;
+  background: var(--death-star);
+  padding: 5px;
+}
+
+.inputBar input {
+  flex: 1;
+  border: none;
+  background: transparent;
+}
+
+.inputBar button {
+  border-radius: 0;
+}
