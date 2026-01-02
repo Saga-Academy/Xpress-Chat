@@ -1,47 +1,40 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Galactic Comm-Link</title>
-<script>
-  // 🔐 Security Guard: Redirect to login if no session is found
-  if (!localStorage.getItem("uid") || !localStorage.getItem("user")) {
-    window.location.href = "login.html";
-  }
-</script>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Xpress Chat: Galactic Terminal</title>
 <link rel="stylesheet" href="css/style.css">
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@400;700&display=swap" rel="stylesheet">
 </head>
-<body class="star-wars-theme">
+<body class="login-theme">
 
-<div class="hologram-effect"></div>
-
-<div id="chatHeader">
-  <span>Sector: <b id="roomName"></b></span>
-  <div class="theme-controls">
-    <button onclick="switchSide('light')">JEDI</button>
-    <button onclick="switchSide('dark')">SITH</button>
-    <button onclick="logout()" style="background: #ff0037; color: white; margin-left: 10px;">ABANDON</button>
+<!-- Star Wars Crawl -->
+<div class="crawl">
+  <div class="crawl-text">
+    <p>Episode I</p>
+    <p>THE CHAT AWAKENS</p>
+    <p>In a galaxy not so far away, brave users embark on an interstellar journey to connect...</p>
+    <p>Messages flow like lightspeed, and avatars shine like stars across the cosmos...</p>
+    <p>Join the rebellion. Verify your identity and step into the Xpress Chat Galactic Terminal!</p>
   </div>
-  <span id="onlineCount"></span>
 </div>
 
-<div id="onlineUsers"></div>
+<!-- Dark overlay -->
+<div class="overlay"></div>
 
-<div id="replyBox" hidden>
-  Replying to: <span id="replyText"></span>
-  <button onclick="cancelReply()">✕</button>
+<!-- Login Container -->
+<div class="login-container">
+  <h2>Xpress Chat: Galactic Terminal</h2>
+  <input id="phone" placeholder="+63XXXXXXXXXX">
+  <input id="avatar" placeholder="Avatar URL (optional)">
+  <div id="recaptcha"></div>
+  <button onclick="sendOTP()">Request Access Code</button>
+
+  <input id="otp" placeholder="Enter Access Code">
+  <button onclick="verifyOTP()">Verify Identity</button>
 </div>
 
-<div id="messages"></div>
-
-<div class="inputBar">
-  <input id="msg" placeholder="Transmitting encrypted data..." autocomplete="off">
-  <button id="sendBtn" onclick="send()">SEND</button>
-</div>
-
-<script type="module" src="js/chat.js"></script>
-<script type="module" src="js/presence.js"></script>
+<script type="module" src="js/auth.js"></script>
 </body>
 </html>
