@@ -69,3 +69,12 @@ function react(id,e){
   runTransaction(ref(db,`rooms/${room}/${id}/reactions/${e}`),
     v=>(v||0)+1);
 }
+
+function switchSide(side) {
+  const root = document.documentElement;
+  if (side === 'dark') {
+    root.style.setProperty('--lightsaber-blue', 'var(--lightsaber-red)');
+  } else {
+    root.style.setProperty('--lightsaber-blue', '#00e5ff');
+  }
+}
