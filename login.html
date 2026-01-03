@@ -260,6 +260,147 @@
     font-size: 0.8rem;
   }
 
+  /* Orange Pilot Section */
+  .orange-pilot-section {
+    margin-top: 25px;
+    padding: 20px;
+    background: rgba(255, 165, 0, 0.1);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 165, 0, 0.3);
+    backdrop-filter: blur(5px);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .orange-pilot-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #FFA500, transparent);
+  }
+
+  .orange-pilot-section h4 {
+    color: #FFA500;
+    margin-bottom: 15px;
+    font-family: 'Orbitron', sans-serif;
+    text-align: center;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .orange-pilot-account {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    background: rgba(255, 165, 0, 0.15);
+    border: 1px solid rgba(255, 165, 0, 0.5);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .orange-pilot-account:hover {
+    background: rgba(255, 165, 0, 0.25);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 165, 0, 0.2);
+    border-color: #FFA500;
+  }
+
+  .orange-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 3px solid #FFA500;
+    object-fit: cover;
+    position: relative;
+  }
+
+  .orange-avatar::after {
+    content: '👑';
+    position: absolute;
+    bottom: -5px;
+    right: -5px;
+    background: #FFA500;
+    color: black;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+  }
+
+  .orange-info {
+    flex: 1;
+  }
+
+  .orange-name {
+    color: #FFA500;
+    font-weight: bold;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .orange-email {
+    color: #FFD580;
+    font-size: 0.85rem;
+    margin: 5px 0;
+  }
+
+  .orange-password {
+    color: #FFB347;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .quick-login-btn {
+    background: linear-gradient(135deg, #FFA500, #FF8C00);
+    color: white;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: bold;
+    letter-spacing: 1px;
+    transition: all 0.3s;
+    width: 100%;
+    margin-top: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .quick-login-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 165, 0, 0.4);
+  }
+
+  .premium-badge {
+    background: #FFA500;
+    color: black;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+
   .signup-link {
     text-align: center;
     margin-top: 25px;
@@ -340,6 +481,15 @@
     .demo-account {
       padding: 8px 12px;
     }
+    
+    .orange-pilot-account {
+      flex-direction: column;
+      text-align: center;
+    }
+    
+    .orange-info {
+      width: 100%;
+    }
   }
 
   @media (max-width: 400px) {
@@ -366,7 +516,7 @@
 <div class="login-container">
   <div class="logo">
     <h1>GALACTIC CHAT</h1>
-    <p>SECURE COMMUNICATION NETWORK</p>
+    <p>STAR WARS CHARACTER CHAT</p>
   </div>
 
   <h3>AUTHORIZATION REQUIRED</h3>
@@ -384,10 +534,49 @@
     <i class="fas fa-sign-in-alt"></i> AUTHORIZE ENTRY
   </button>
 
+  <!-- Orange Pilot Section -->
+  <div class="orange-pilot-section">
+    <h4><i class="fas fa-user-astronaut"></i> ORANGE PILOT ACCOUNT</h4>
+    
+    <div class="orange-pilot-account" onclick="fillDemoAccount('orangewareph@gmail.com', 'donguardo888967', 'Orange Pilot')">
+      <div class="orange-avatar-container">
+        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=orange&backgroundColor=FFA500&hairColor=000000&accessories=glasses" 
+             class="orange-avatar" alt="Orange Pilot">
+      </div>
+      
+      <div class="orange-info">
+        <div class="orange-name">
+          Orange Pilot
+          <span class="premium-badge">
+            <i class="fas fa-crown"></i> PREMIUM
+          </span>
+        </div>
+        <div class="orange-email">
+          <i class="fas fa-envelope"></i> orangewareph@gmail.com
+        </div>
+        <div class="orange-password">
+          <i class="fas fa-key"></i> donguardo888967
+        </div>
+      </div>
+      
+      <div style="color: #FFA500; font-size: 1.5rem;">
+        <i class="fas fa-chevron-right"></i>
+      </div>
+    </div>
+    
+    <button class="quick-login-btn" onclick="fillDemoAccount('orangewareph@gmail.com', 'donguardo888967', 'Orange Pilot')">
+      <i class="fas fa-rocket"></i> QUICK LOGIN AS ORANGE PILOT
+    </button>
+    
+    <p style="font-size: 0.85rem; color: #FFD580; text-align: center; margin-top: 15px; line-height: 1.4;">
+      <i class="fas fa-info-circle"></i> Special account with premium features and character customization
+    </p>
+  </div>
+
   <div class="demo-section">
-    <h4><i class="fas fa-rocket"></i> QUICK DEMO ACCESS</h4>
+    <h4><i class="fas fa-jedi"></i> STAR WARS CHARACTERS</h4>
     <p style="font-size: 0.9rem; color: #88ccff; margin-bottom: 10px; text-align: center;">
-      Select a demo character to auto-fill credentials:
+      Try these Star Wars character accounts:
     </p>
     <div class="demo-grid" id="demoAccountsGrid">
       <!-- Demo accounts will be loaded here -->
@@ -396,49 +585,49 @@
 
   <div class="signup-link">
     <a href="signup.html">
-      <i class="fas fa-user-plus"></i> New to the fleet? Register as a pilot
+      <i class="fas fa-user-plus"></i> Create your own Star Wars character
     </a>
   </div>
 </div>
 
 <script>
-  // Demo accounts with avatars
+  // Demo accounts with REAL Star Wars character images
   const DEMO_ACCOUNTS = [
     { 
       email: "luke@jedi.com", 
       password: "force123", 
       name: "Luke Skywalker",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=luke&backgroundColor=00aaff&hair=short"
+      avatar: "https://static.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg"
     },
     { 
       email: "leia@rebel.com", 
       password: "princess123", 
       name: "Princess Leia",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=leia&backgroundColor=ff66aa&hair=bun"
+      avatar: "https://static.wikia.nocookie.net/starwars/images/1/1b/LeiaOrganaheadshot.jpg"
     },
     { 
       email: "han@falcon.com", 
       password: "nerf123", 
       name: "Han Solo",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=han&backgroundColor=333333&hair=short"
+      avatar: "https://static.wikia.nocookie.net/starwars/images/6/67/HanSolo.jpg"
     },
     { 
       email: "darth@sith.com", 
       password: "vader123", 
       name: "Darth Vader",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=vader&backgroundColor=ff2222&accessories=sunglasses"
+      avatar: "https://static.wikia.nocookie.net/starwars/images/0/0b/Vader.jpg"
     },
     { 
       email: "yoda@jedi.com", 
       password: "master123", 
       name: "Master Yoda",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=yoda&backgroundColor=00ff88&skinColor=f9d9ab"
+      avatar: "https://static.wikia.nocookie.net/starwars/images/6/6f/Yoda_SWSB.png"
     },
     { 
       email: "obiwan@jedi.com", 
       password: "hello123", 
       name: "Obi-Wan Kenobi",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=obiwan&backgroundColor=00aaff&hair=long&facialHair=beard"
+      avatar: "https://static.wikia.nocookie.net/starwars/images/4/4e/ObiWanHS-SWE.jpg"
     }
   ];
 
@@ -522,8 +711,8 @@
     msgDiv.textContent = message;
     
     const container = document.querySelector('.login-container');
-    const demoSection = container.querySelector('.demo-section');
-    container.insertBefore(msgDiv, demoSection);
+    const orangeSection = container.querySelector('.orange-pilot-section');
+    container.insertBefore(msgDiv, orangeSection);
     
     if (type !== 'error') {
       setTimeout(() => msgDiv.remove(), 5000);
