@@ -1,849 +1,492 @@
-// ChatApp - Main JavaScript File with Authentication
-// WeChat Clone Implementation
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatApp - Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-text { background: linear-gradient(45deg, #10B981, #0EA5E9); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .glass-effect { backdrop-filter: blur(10px); background: rgba(255, 255, 255, 0.9); }
+        .login-card { transition: all 0.3s ease; }
+        .input-focus:focus { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(16, 185, 129, 0.1); }
+        .password-toggle { cursor: pointer; transition: all 0.2s ease; }
+        .password-toggle:hover { transform: scale(1.1); }
+    </style>
+</head>
+<body class="bg-gray-50 h-screen flex items-center justify-center p-4">
+    <!-- Background Animation -->
+    <div class="fixed inset-0 overflow-hidden">
+        <div class="absolute -top-40 -right-40 w-80 h-80 bg-emerald-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
+        <div class="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-2000"></div>
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-4000"></div>
+    </div>
 
-class ChatApp {
-    constructor() {
-        this.currentChat = null;
-        this.chats = [];
-        this.contacts = [];
-        this.messages = {};
-        this.user = null; // Will be set after authentication check
-        this.currentUser = null;
-        
-        this.init();
-    }
+    <!-- Login Container -->
+    <div class="relative z-10 w-full max-w-md">
+        <!-- Logo and Title -->
+        <div class="text-center mb-8">
+            <div class="flex items-center justify-center space-x-3 mb-4">
+                <img src="resources/app-logo.png" alt="ChatApp" class="w-12 h-12">
+                <h1 class="text-3xl font-bold gradient-text" style="font-family: 'Poppins', sans-serif;">ChatApp</h1>
+            </div>
+            <p class="text-gray-600">Welcome back! Sign in to continue chatting</p>
+        </div>
 
-    init() {
-        // Check authentication first
-        if (!this.checkAuthentication()) {
-            return;
-        }
-        
-        this.loadData();
-        this.setupEventListeners();
-        this.renderChatList();
-        this.startMessageSimulation();
-        this.initAnimations();
-    }
-
-    checkAuthentication() {
-        const currentUser = localStorage.getItem('chatapp_current_user');
-        if (!currentUser) {
-            // Redirect to login if not authenticated
-            if (window.location.pathname !== '/login.html' && !window.location.href.includes('login.html')) {
-                window.location.href = 'login.html';
-            }
-            return false;
-        }
-        
-        // Set current user
-        this.currentUser = JSON.parse(currentUser);
-        this.user = {
-            id: this.currentUser.id,
-            name: this.currentUser.name,
-            avatar: this.currentUser.avatar
-        };
-        
-        return true;
-    }
-
-    loadData() {
-        // Load from localStorage or initialize with mock data
-        const savedChats = localStorage.getItem('chatapp_chats');
-        const savedMessages = localStorage.getItem('chatapp_messages');
-        const savedContacts = localStorage.getItem('chatapp_contacts');
-
-        if (savedChats) {
-            this.chats = JSON.parse(savedChats);
-        } else {
-            this.chats = this.getMockChats();
-        }
-
-        if (savedMessages) {
-            this.messages = JSON.parse(savedMessages);
-        } else {
-            this.messages = this.getMockMessages();
-        }
-
-        if (savedContacts) {
-            this.contacts = JSON.parse(savedContacts);
-        } else {
-            this.contacts = this.getMockContacts();
-        }
-    }
-
-    saveData() {
-        localStorage.setItem('chatapp_chats', JSON.stringify(this.chats));
-        localStorage.setItem('chatapp_messages', JSON.stringify(this.messages));
-        localStorage.setItem('chatapp_contacts', JSON.stringify(this.contacts));
-    }
-
-    getMockChats() {
-        return [
-            {
-                id: 'chat1',
-                contactId: 'contact1',
-                lastMessage: 'Hey! How are you doing?',
-                timestamp: new Date(Date.now() - 300000).toISOString(),
-                unread: 2,
-                isOnline: true
-            },
-            {
-                id: 'chat2',
-                contactId: 'contact2',
-                lastMessage: 'The meeting is at 3 PM tomorrow',
-                timestamp: new Date(Date.now() - 900000).toISOString(),
-                unread: 0,
-                isOnline: false
-            },
-            {
-                id: 'chat3',
-                contactId: 'contact3',
-                lastMessage: 'Did you see the latest update?',
-                timestamp: new Date(Date.now() - 1800000).toISOString(),
-                unread: 1,
-                isOnline: true
-            },
-            {
-                id: 'chat4',
-                contactId: 'contact4',
-                lastMessage: 'Thanks for your help! 😊',
-                timestamp: new Date(Date.now() - 3600000).toISOString(),
-                unread: 0,
-                isOnline: false
-            },
-            {
-                id: 'chat5',
-                contactId: 'contact5',
-                lastMessage: 'Let me check and get back to you',
-                timestamp: new Date(Date.now() - 7200000).toISOString(),
-                unread: 0,
-                isOnline: true
-            }
-        ];
-    }
-
-    getMockMessages() {
-        const now = new Date();
-        return {
-            'chat1': [
-                {
-                    id: 'msg1',
-                    text: 'Hi there! 👋',
-                    sender: 'contact1',
-                    timestamp: new Date(now - 600000).toISOString(),
-                    status: 'read'
-                },
-                {
-                    id: 'msg2',
-                    text: 'Hey! How are you doing?',
-                    sender: this.user.id,
-                    timestamp: new Date(now - 300000).toISOString(),
-                    status: 'delivered'
-                },
-                {
-                    id: 'msg3',
-                    text: 'I\'m doing great! Just working on some new features.',
-                    sender: 'contact1',
-                    timestamp: new Date(now - 240000).toISOString(),
-                    status: 'read'
-                },
-                {
-                    id: 'msg4',
-                    text: 'That sounds exciting! What kind of features?',
-                    sender: this.user.id,
-                    timestamp: new Date(now - 180000).toISOString(),
-                    status: 'sent'
-                }
-            ],
-            'chat2': [
-                {
-                    id: 'msg5',
-                    text: 'Don\'t forget about our meeting tomorrow',
-                    sender: 'contact2',
-                    timestamp: new Date(now - 1200000).toISOString(),
-                    status: 'read'
-                },
-                {
-                    id: 'msg6',
-                    text: 'The meeting is at 3 PM tomorrow',
-                    sender: this.user.id,
-                    timestamp: new Date(now - 900000).toISOString(),
-                    status: 'delivered'
-                }
-            ],
-            'chat3': [
-                {
-                    id: 'msg7',
-                    text: 'Did you see the latest update?',
-                    sender: 'contact3',
-                    timestamp: new Date(now - 1800000).toISOString(),
-                    status: 'read'
-                }
-            ],
-            'chat4': [
-                {
-                    id: 'msg8',
-                    text: 'Thanks for your help! 😊',
-                    sender: 'contact4',
-                    timestamp: new Date(now - 3600000).toISOString(),
-                    status: 'read'
-                }
-            ],
-            'chat5': [
-                {
-                    id: 'msg9',
-                    text: 'Let me check and get back to you',
-                    sender: 'contact5',
-                    timestamp: new Date(now - 7200000).toISOString(),
-                    status: 'read'
-                }
-            ]
-        };
-    }
-
-    getMockContacts() {
-        return [
-            {
-                id: 'contact1',
-                name: 'Sarah Johnson',
-                avatar: 'https://kimi-web-img.moonshot.cn/img/tracywrightcorvo.com/45f4a24e606db8c6fc6cb141ab47d93fc9e286a4.jpg',
-                status: 'Software Developer',
-                isOnline: true,
-                lastSeen: new Date().toISOString()
-            },
-            {
-                id: 'contact2',
-                name: 'Mike Chen',
-                avatar: 'https://kimi-web-img.moonshot.cn/img/img.freepik.com/33796f1de011459bb90b9e8caae24265fb5e00a4.jpg',
-                status: 'Product Manager',
-                isOnline: false,
-                lastSeen: new Date(Date.now() - 1800000).toISOString()
-            },
-            {
-                id: 'contact3',
-                name: 'Emily Davis',
-                avatar: 'https://kimi-web-img.moonshot.cn/img/images.rawpixel.com/068f7bd92911b9f69d6e398f9bbfd11985239fbc.jpg',
-                status: 'UX Designer',
-                isOnline: true,
-                lastSeen: new Date().toISOString()
-            },
-            {
-                id: 'contact4',
-                name: 'Alex Rodriguez',
-                avatar: 'https://kimi-web-img.moonshot.cn/img/headshots-inc.com/8449031380f3d0f96f847f9d90dc2f301a15e9ad.jpg',
-                status: 'Marketing Specialist',
-                isOnline: false,
-                lastSeen: new Date(Date.now() - 3600000).toISOString()
-            },
-            {
-                id: 'contact5',
-                name: 'Lisa Wang',
-                avatar: 'https://kimi-web-img.moonshot.cn/img/www.profilebakery.com/d1b551532dafe7d6076ca545a500f7eafc3a9774.jpg',
-                status: 'Data Analyst',
-                isOnline: true,
-                lastSeen: new Date().toISOString()
-            },
-            {
-                id: 'contact6',
-                name: 'David Kim',
-                avatar: 'https://kimi-web-img.moonshot.cn/img/media.istockphoto.com/931fe7fe4c12d16b6eff1d46fb35eab953769494.jpg',
-                status: 'DevOps Engineer',
-                isOnline: false,
-                lastSeen: new Date(Date.now() - 7200000).toISOString()
-            },
-            {
-                id: 'contact7',
-                name: 'Rachel Green',
-                avatar: 'https://kimi-web-img.moonshot.cn/img/t3.ftcdn.net/0ce9154ac87c256b665af2d220a3a754cb1c95a8.jpg',
-                status: 'Graphic Designer',
-                isOnline: true,
-                lastSeen: new Date().toISOString()
-            },
-            {
-                id: 'contact8',
-                name: 'Tom Wilson',
-                avatar: 'https://kimi-web-img.moonshot.cn/img/t3.ftcdn.net/2bfd6d9887af2a88e5f2fbcabc0d15238da2f340.jpg',
-                status: 'Sales Manager',
-                isOnline: false,
-                lastSeen: new Date(Date.now() - 5400000).toISOString()
-            }
-        ];
-    }
-
-    setupEventListeners() {
-        // Add logout functionality
-        this.addLogoutListener();
-
-        // Chat search
-        document.getElementById('chatSearch').addEventListener('input', (e) => {
-            this.filterChats(e.target.value);
-        });
-
-        // Message input
-        const messageInput = document.getElementById('messageInput');
-        messageInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                this.sendMessage();
-            }
-        });
-
-        messageInput.addEventListener('input', (e) => {
-            this.autoResizeTextarea(e.target);
-        });
-
-        // Send button
-        document.getElementById('sendBtn').addEventListener('click', () => {
-            this.sendMessage();
-        });
-
-        // Emoji button
-        document.getElementById('emojiBtn').addEventListener('click', () => {
-            this.toggleEmojiPicker();
-        });
-
-        // Voice button
-        document.getElementById('voiceBtn').addEventListener('click', () => {
-            this.showVoiceModal();
-        });
-
-        // Voice modal
-        document.getElementById('cancelVoice').addEventListener('click', () => {
-            this.hideVoiceModal();
-        });
-
-        document.getElementById('sendVoice').addEventListener('click', () => {
-            this.sendVoiceMessage();
-        });
-
-        // Emoji picker
-        document.querySelectorAll('.emoji-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                this.insertEmoji(e.target.dataset.emoji);
-            });
-        });
-
-        // Search and more buttons
-        document.getElementById('searchBtn').addEventListener('click', () => {
-            this.showSearch();
-        });
-
-        document.getElementById('moreBtn').addEventListener('click', () => {
-            this.showMoreOptions();
-        });
-    }
-
-    addLogoutListener() {
-        // Add logout functionality to profile page or create a logout button
-        // This is a placeholder - you can add a logout button in the header or profile page
-        const logoutBtn = document.getElementById('logoutBtn');
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', () => {
-                this.logout();
-            });
-        }
-    }
-
-    logout() {
-        if (confirm('Are you sure you want to log out?')) {
-            localStorage.removeItem('chatapp_current_user');
-            localStorage.removeItem('chatapp_remember_me');
-            window.location.href = 'login.html';
-        }
-    }
-
-    renderChatList() {
-        const chatList = document.getElementById('chatList');
-        chatList.innerHTML = '';
-
-        this.chats.forEach(chat => {
-            const contact = this.contacts.find(c => c.id === chat.contactId);
-            if (!contact) return;
-
-            const chatItem = document.createElement('div');
-            chatItem.className = 'chat-item p-4 border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition-colors';
-            chatItem.dataset.chatId = chat.id;
-
-            const time = new Date(chat.timestamp);
-            const timeStr = this.formatTime(time);
-
-            chatItem.innerHTML = `
-                <div class="flex items-center space-x-3">
+        <!-- Login Card -->
+        <div class="login-card glass-effect rounded-2xl border border-gray-200 p-8 shadow-xl">
+            <form id="loginForm" class="space-y-6">
+                <!-- Username Input -->
+                <div>
+                    <label for="username" class="block text-sm font-medium text-gray-700 mb-2">Username or Email</label>
                     <div class="relative">
-                        <img src="${contact.avatar}" alt="${contact.name}" class="w-12 h-12 rounded-full object-cover">
-                        ${contact.isOnline ? '<div class="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 border-2 border-white rounded-full online-indicator"></div>' : ''}
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <div class="flex items-center justify-between">
-                            <h3 class="font-semibold text-gray-900 truncate">${contact.name}</h3>
-                            <span class="text-xs text-gray-500">${timeStr}</span>
-                        </div>
-                        <div class="flex items-center justify-between mt-1">
-                            <p class="text-sm text-gray-600 truncate">${chat.lastMessage}</p>
-                            ${chat.unread > 0 ? `<span class="bg-emerald-500 text-white text-xs rounded-full px-2 py-1">${chat.unread}</span>` : ''}
+                        <input type="text" id="username" name="username" required
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent input-focus transition-all duration-200"
+                               placeholder="Enter your username">
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                            </svg>
                         </div>
                     </div>
                 </div>
-            `;
 
-            chatItem.addEventListener('click', () => {
-                this.selectChat(chat.id);
-            });
-
-            chatList.appendChild(chatItem);
-        });
-    }
-
-    selectChat(chatId) {
-        this.currentChat = chatId;
-        
-        // Update active chat styling
-        document.querySelectorAll('.chat-item').forEach(item => {
-            item.classList.remove('bg-emerald-50', 'border-l-4', 'border-emerald-500');
-        });
-        
-        const selectedChat = document.querySelector(`[data-chat-id="${chatId}"]`);
-        if (selectedChat) {
-            selectedChat.classList.add('bg-emerald-50', 'border-l-4', 'border-emerald-500');
-        }
-
-        // Clear unread count
-        const chat = this.chats.find(c => c.id === chatId);
-        if (chat && chat.unread > 0) {
-            chat.unread = 0;
-            this.saveData();
-            this.renderChatList();
-        }
-
-        // Update chat header
-        this.updateChatHeader(chatId);
-        
-        // Render messages
-        this.renderMessages(chatId);
-    }
-
-    updateChatHeader(chatId) {
-        const chat = this.chats.find(c => c.id === chatId);
-        const contact = this.contacts.find(c => c.id === chat.contactId);
-        
-        if (contact) {
-            document.getElementById('currentChatName').textContent = contact.name;
-            document.getElementById('currentChatAvatar').src = contact.avatar;
-            document.getElementById('currentChatStatus').textContent = contact.isOnline ? 'Online' : `Last seen ${this.formatLastSeen(contact.lastSeen)}`;
-            
-            const onlineStatus = document.getElementById('onlineStatus');
-            if (contact.isOnline) {
-                onlineStatus.classList.remove('hidden');
-            } else {
-                onlineStatus.classList.add('hidden');
-            }
-        }
-    }
-
-    renderMessages(chatId) {
-        const messagesContainer = document.getElementById('messagesContainer');
-        const messages = this.messages[chatId] || [];
-        
-        messagesContainer.innerHTML = '';
-
-        messages.forEach((message, index) => {
-            const messageDiv = document.createElement('div');
-            const isUser = message.sender === this.user.id;
-            
-            messageDiv.className = `flex ${isUser ? 'justify-end' : 'justify-start'} mb-4`;
-            
-            const messageTime = new Date(message.timestamp);
-            const timeStr = this.formatTime(messageTime);
-            
-            messageDiv.innerHTML = `
-                <div class="message-bubble max-w-xs ${isUser ? 'bg-emerald-500 text-white' : 'bg-white text-gray-900'} rounded-lg px-4 py-2 shadow-sm">
-                    <p class="text-sm">${this.escapeHtml(message.text)}</p>
-                    <div class="flex items-center justify-end mt-1 space-x-1">
-                        <span class="text-xs ${isUser ? 'text-emerald-100' : 'text-gray-500'}">${timeStr}</span>
-                        ${isUser ? this.getStatusIcon(message.status) : ''}
+                <!-- Password Input -->
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                    <div class="relative">
+                        <input type="password" id="password" name="password" required
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent input-focus transition-all duration-200"
+                               placeholder="Enter your password">
+                        <button type="button" id="togglePassword" class="absolute inset-y-0 right-0 pr-3 flex items-center password-toggle">
+                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                            </svg>
+                        </button>
                     </div>
                 </div>
-            `;
 
-            messagesContainer.appendChild(messageDiv);
-        });
+                <!-- Remember Me -->
+                <div class="flex items-center justify-between">
+                    <label class="flex items-center">
+                        <input type="checkbox" id="rememberMe" name="rememberMe" class="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500">
+                        <span class="ml-2 text-sm text-gray-600">Remember me</span>
+                    </label>
+                    <a href="#" id="forgotPassword" class="text-sm text-emerald-600 hover:text-emerald-700">Forgot password?</a>
+                </div>
 
-        // Scroll to bottom
-        this.scrollToBottom();
-    }
+                <!-- Login Button -->
+                <button type="submit" id="loginBtn" 
+                        class="w-full bg-gradient-to-r from-emerald-500 to-blue-500 text-white py-3 rounded-lg font-medium hover:from-emerald-600 hover:to-blue-600 transition-all duration-200 transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2">
+                    Sign In
+                </button>
+            </form>
 
-    sendMessage() {
-        const messageInput = document.getElementById('messageInput');
-        const text = messageInput.value.trim();
-        
-        if (!text || !this.currentChat) return;
+            <!-- Sample Accounts Info -->
+            <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+                <h4 class="text-sm font-medium text-gray-700 mb-2">Sample Accounts:</h4>
+                <div class="space-y-1 text-xs text-gray-600">
+                    <div>alex@example.com / password123</div>
+                    <div>sarah@example.com / password123</div>
+                    <div>nasmusic.ph@gmail.com / donguardo888967</div>
+                    <div>janzel2015@gmail.com / 123456789</div>
+                </div>
+            </div>
 
-        const message = {
-            id: 'msg_' + Date.now(),
-            text: text,
-            sender: this.user.id,
-            timestamp: new Date().toISOString(),
-            status: 'sent'
-        };
+            <!-- Divider -->
+            <div class="relative my-6">
+                <div class="absolute inset-0 flex items-center">
+                    <div class="w-full border-t border-gray-300"></div>
+                </div>
+                <div class="relative flex justify-center text-sm">
+                    <span class="px-2 bg-white text-gray-500">Or continue with</span>
+                </div>
+            </div>
 
-        // Add message to current chat
-        if (!this.messages[this.currentChat]) {
-            this.messages[this.currentChat] = [];
-        }
-        this.messages[this.currentChat].push(message);
+            <!-- Social Login -->
+            <div class="grid grid-cols-2 gap-3">
+                <button type="button" id="googleLogin" 
+                        class="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                    <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24">
+                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                    </svg>
+                    Google
+                </button>
+                <button type="button" id="appleLogin" 
+                        class="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701z"/>
+                    </svg>
+                    Apple
+                </button>
+            </div>
 
-        // Update last message in chat list
-        const chat = this.chats.find(c => c.id === this.currentChat);
-        if (chat) {
-            chat.lastMessage = text;
-            chat.timestamp = message.timestamp;
-        }
+            <!-- Sign Up Link -->
+            <div class="text-center mt-6">
+                <p class="text-sm text-gray-600">
+                    Don't have an account? 
+                    <a href="#" id="signUpLink" class="text-emerald-600 hover:text-emerald-700 font-medium">Sign up</a>
+                </p>
+            </div>
+        </div>
 
-        // Clear input
-        messageInput.value = '';
-        this.autoResizeTextarea(messageInput);
+        <!-- Error Message -->
+        <div id="errorMessage" class="hidden mt-4 bg-red-50 border border-red-200 rounded-lg p-4">
+            <div class="flex items-center">
+                <svg class="w-5 h-5 text-red-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <p id="errorText" class="text-sm text-red-600"></p>
+            </div>
+        </div>
+    </div>
 
-        // Hide emoji picker if open
-        document.getElementById('emojiPicker').classList.add('hidden');
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-6 flex items-center space-x-3">
+            <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-emerald-500"></div>
+            <span class="text-gray-700">Signing in...</span>
+        </div>
+    </div>
 
-        // Re-render messages and chat list
-        this.renderMessages(this.currentChat);
-        this.renderChatList();
-        this.saveData();
-
-        // Animate message send
-        this.animateMessageSend();
-
-        // Simulate message delivery and read status
-        setTimeout(() => {
-            message.status = 'delivered';
-            this.renderMessages(this.currentChat);
-            this.saveData();
-        }, 1000);
-
-        // Simulate typing indicator and response
-        this.simulateTyping();
-    }
-
-    simulateTyping() {
-        const typingIndicator = document.getElementById('typingIndicator');
-        typingIndicator.classList.remove('hidden');
-        
-        setTimeout(() => {
-            typingIndicator.classList.add('hidden');
-            this.sendAutoReply();
-        }, 2000 + Math.random() * 2000);
-    }
-
-    sendAutoReply() {
-        const replies = [
-            'That\'s interesting! Tell me more.',
-            'I see what you mean.',
-            'Thanks for sharing that!',
-            'Got it! 👍',
-            'Sounds good to me!',
-            'I\'ll look into that.',
-            'Great idea!',
-            'Let me think about it.',
-            'I agree with you.',
-            'That makes sense!'
-        ];
-        
-        const randomReply = replies[Math.floor(Math.random() * replies.length)];
-        
-        const message = {
-            id: 'msg_' + Date.now(),
-            text: randomReply,
-            sender: this.contacts.find(c => c.id === this.chats.find(ch => ch.id === this.currentChat).contactId).id,
-            timestamp: new Date().toISOString(),
-            status: 'read'
-        };
-
-        if (!this.messages[this.currentChat]) {
-            this.messages[this.currentChat] = [];
-        }
-        this.messages[this.currentChat].push(message);
-
-        // Update last message
-        const chat = this.chats.find(c => c.id === this.currentChat);
-        if (chat) {
-            chat.lastMessage = randomReply;
-            chat.timestamp = message.timestamp;
-        }
-
-        this.renderMessages(this.currentChat);
-        this.renderChatList();
-        this.saveData();
-        this.animateMessageReceive();
-    }
-
-    toggleEmojiPicker() {
-        const emojiPicker = document.getElementById('emojiPicker');
-        emojiPicker.classList.toggle('hidden');
-        
-        if (!emojiPicker.classList.contains('hidden')) {
-            anime({
-                targets: emojiPicker,
-                opacity: [0, 1],
-                translateY: [-10, 0],
-                duration: 200,
-                easing: 'easeOutQuad'
-            });
-        }
-    }
-
-    insertEmoji(emoji) {
-        const messageInput = document.getElementById('messageInput');
-        messageInput.value += emoji;
-        messageInput.focus();
-        this.toggleEmojiPicker();
-    }
-
-    showVoiceModal() {
-        document.getElementById('voiceModal').classList.remove('hidden');
-        anime({
-            targets: '#voiceModal .bg-white',
-            scale: [0.8, 1],
-            opacity: [0, 1],
-            duration: 300,
-            easing: 'easeOutBack'
-        });
-    }
-
-    hideVoiceModal() {
-        anime({
-            targets: '#voiceModal .bg-white',
-            scale: [1, 0.8],
-            opacity: [1, 0],
-            duration: 200,
-            easing: 'easeInQuad',
-            complete: () => {
-                document.getElementById('voiceModal').classList.add('hidden');
+    <script>
+        // Login page specific functionality
+        class LoginManager {
+            constructor() {
+                this.init();
             }
-        });
-    }
 
-    sendVoiceMessage() {
-        const message = {
-            id: 'msg_' + Date.now(),
-            text: '🎤 Voice message (30s)',
-            sender: this.user.id,
-            timestamp: new Date().toISOString(),
-            status: 'sent',
-            type: 'voice'
-        };
-
-        if (!this.messages[this.currentChat]) {
-            this.messages[this.currentChat] = [];
-        }
-        this.messages[this.currentChat].push(message);
-
-        const chat = this.chats.find(c => c.id === this.currentChat);
-        if (chat) {
-            chat.lastMessage = '🎤 Voice message';
-            chat.timestamp = message.timestamp;
-        }
-
-        this.renderMessages(this.currentChat);
-        this.renderChatList();
-        this.saveData();
-        this.hideVoiceModal();
-        this.animateMessageSend();
-    }
-
-    filterChats(query) {
-        const chatItems = document.querySelectorAll('.chat-item');
-        const lowerQuery = query.toLowerCase();
-
-        chatItems.forEach(item => {
-            const chatId = item.dataset.chatId;
-            const chat = this.chats.find(c => c.id === chatId);
-            const contact = this.contacts.find(c => c.id === chat.contactId);
-            
-            if (contact.name.toLowerCase().includes(lowerQuery) || 
-                chat.lastMessage.toLowerCase().includes(lowerQuery)) {
-                item.style.display = 'block';
-            } else {
-                item.style.display = 'none';
+            init() {
+                this.setupEventListeners();
+                this.checkLoggedInUser();
+                this.initAnimations();
             }
-        });
-    }
 
-    autoResizeTextarea(textarea) {
-        textarea.style.height = 'auto';
-        textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
-    }
+            setupEventListeners() {
+                // Form submission
+                document.getElementById('loginForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.handleLogin();
+                });
 
-    scrollToBottom() {
-        const messagesArea = document.getElementById('messagesArea');
-        messagesArea.scrollTop = messagesArea.scrollHeight;
-    }
+                // Password toggle
+                document.getElementById('togglePassword').addEventListener('click', () => {
+                    this.togglePasswordVisibility();
+                });
 
-    formatTime(date) {
-        const now = new Date();
-        const diff = now - date;
-        const minutes = Math.floor(diff / 60000);
-        const hours = Math.floor(diff / 3600000);
-        const days = Math.floor(diff / 86400000);
+                // Forgot password
+                document.getElementById('forgotPassword').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.handleForgotPassword();
+                });
 
-        if (minutes < 1) return 'now';
-        if (minutes < 60) return `${minutes}m`;
-        if (hours < 24) return `${hours}h`;
-        if (days < 7) return `${days}d`;
-        return date.toLocaleDateString();
-    }
+                // Social logins
+                document.getElementById('googleLogin').addEventListener('click', () => {
+                    this.handleSocialLogin('google');
+                });
 
-    formatLastSeen(dateString) {
-        const date = new Date(dateString);
-        const now = new Date();
-        const diff = now - date;
-        const minutes = Math.floor(diff / 60000);
-        const hours = Math.floor(diff / 3600000);
-        const days = Math.floor(diff / 86400000);
+                document.getElementById('appleLogin').addEventListener('click', () => {
+                    this.handleSocialLogin('apple');
+                });
 
-        if (minutes < 1) return 'just now';
-        if (minutes < 60) return `${minutes} minutes ago`;
-        if (hours < 24) return `${hours} hours ago`;
-        if (days < 7) return `${days} days ago`;
-        return date.toLocaleDateString();
-    }
+                // Sign up link
+                document.getElementById('signUpLink').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.handleSignUp();
+                });
+            }
 
-    getStatusIcon(status) {
-        switch (status) {
-            case 'sent':
-                return '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
-            case 'delivered':
-                return '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
-            case 'read':
-                return '<svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
-            default:
-                return '';
-        }
-    }
-
-    escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-    }
-
-    animateMessageSend() {
-        const lastMessage = document.querySelector('#messagesContainer .message-bubble:last-child');
-        if (lastMessage) {
-            anime({
-                targets: lastMessage,
-                scale: [0.8, 1],
-                opacity: [0, 1],
-                translateY: [20, 0],
-                duration: 300,
-                easing: 'easeOutBack'
-            });
-        }
-    }
-
-    animateMessageReceive() {
-        const lastMessage = document.querySelector('#messagesContainer .message-bubble:last-child');
-        if (lastMessage) {
-            anime({
-                targets: lastMessage,
-                scale: [0.8, 1],
-                opacity: [0, 1],
-                translateX: [-20, 0],
-                duration: 400,
-                easing: 'easeOutElastic(1, .8)'
-            });
-        }
-    }
-
-    initAnimations() {
-        // Animate header on load
-        anime({
-            targets: 'header',
-            translateY: [-50, 0],
-            opacity: [0, 1],
-            duration: 600,
-            easing: 'easeOutQuad'
-        });
-
-        // Animate chat list items
-        anime({
-            targets: '.chat-item',
-            translateX: [-50, 0],
-            opacity: [0, 1],
-            duration: 400,
-            delay: anime.stagger(100),
-            easing: 'easeOutQuad'
-        });
-
-        // Animate bottom navigation
-        anime({
-            targets: 'nav',
-            translateY: [100, 0],
-            opacity: [0, 1],
-            duration: 500,
-            delay: 300,
-            easing: 'easeOutQuad'
-        });
-    }
-
-    startMessageSimulation() {
-        // Simulate random messages every 30-60 seconds
-        setInterval(() => {
-            if (Math.random() < 0.3) { // 30% chance
-                const randomChat = this.chats[Math.floor(Math.random() * this.chats.length)];
-                if (randomChat && randomChat !== this.currentChat) {
-                    randomChat.unread++;
-                    this.renderChatList();
-                    this.saveData();
+            checkLoggedInUser() {
+                // Check if user is already logged in
+                const currentUser = localStorage.getItem('chatapp_current_user');
+                if (currentUser) {
+                    // Redirect to main chat
+                    window.location.href = 'index.html';
                 }
             }
-        }, 30000 + Math.random() * 30000);
-    }
 
-    showSearch() {
-        document.getElementById('chatSearch').focus();
-    }
+            handleLogin() {
+                const username = document.getElementById('username').value.trim();
+                const password = document.getElementById('password').value;
+                const rememberMe = document.getElementById('rememberMe').checked;
 
-    showMoreOptions() {
-        alert('More options coming soon!');
-    }
-}
+                // Hide previous error
+                this.hideError();
 
-// Initialize the app when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-    // Only initialize ChatApp if we're on the main pages (not login)
-    if (window.location.pathname !== '/login.html' && !window.location.href.includes('login.html')) {
-        window.chatApp = new ChatApp();
-    }
-});
+                // Validation
+                if (!username || !password) {
+                    this.showError('Please enter both username and password');
+                    return;
+                }
 
-// Add some global utility functions
-window.showNotification = function(message) {
-    // Create a simple notification
-    const notification = document.createElement('div');
-    notification.className = 'fixed top-4 right-4 bg-emerald-500 text-white px-4 py-2 rounded-lg shadow-lg z-50';
-    notification.textContent = message;
-    document.body.appendChild(notification);
+                // Mock authentication (in real app, this would be an API call)
+                const users = this.getMockUsers();
+                const user = users.find(u => 
+                    (u.username === username || u.email === username) && u.password === password
+                );
 
-    anime({
-        targets: notification,
-        translateX: [300, 0],
-        opacity: [0, 1],
-        duration: 300,
-        easing: 'easeOutQuad'
-    });
+                if (user) {
+                    // Show loading
+                    this.showLoading();
 
-    setTimeout(() => {
-        anime({
-            targets: notification,
-            translateX: [0, 300],
-            opacity: [1, 0],
-            duration: 300,
-            easing: 'easeInQuad',
-            complete: () => {
-                document.body.removeChild(notification);
+                    // Store user session
+                    const userSession = {
+                        id: user.id,
+                        username: user.username,
+                        name: user.name,
+                        email: user.email,
+                        avatar: user.avatar,
+                        status: user.status || 'Software Developer • San Francisco, CA',
+                        phone: user.phone || '+1 (555) 123-4567',
+                        location: user.location || 'San Francisco, CA',
+                        loginTime: new Date().toISOString()
+                    };
+
+                    // Store in localStorage
+                    localStorage.setItem('chatapp_current_user', JSON.stringify(userSession));
+                    
+                    if (rememberMe) {
+                        localStorage.setItem('chatapp_remember_me', 'true');
+                    }
+
+                    // Simulate API delay
+                    setTimeout(() => {
+                        this.hideLoading();
+                        
+                        // Show success animation
+                        this.showSuccessAnimation(() => {
+                            // Redirect to main chat
+                            window.location.href = 'index.html';
+                        });
+                    }, 1500);
+                } else {
+                    this.showError('Invalid username or password');
+                }
             }
+
+            getMockUsers() {
+                return [
+                    {
+                        id: 'user1',
+                        username: 'alexjohnson',
+                        email: 'alex@example.com',
+                        password: 'password123',
+                        name: 'Alex Johnson',
+                        avatar: 'https://kimi-web-img.moonshot.cn/img/img.freepik.com/33796f1de011459bb90b9e8caae24265fb5e00a4.jpg',
+                        status: 'Software Developer • San Francisco, CA',
+                        phone: '+1 (555) 123-4567',
+                        location: 'San Francisco, CA'
+                    },
+                    {
+                        id: 'user2',
+                        username: 'sarahwilson',
+                        email: 'sarah@example.com',
+                        password: 'password123',
+                        name: 'Sarah Wilson',
+                        avatar: 'https://kimi-web-img.moonshot.cn/img/tracywrightcorvo.com/45f4a24e606db8c6fc6cb141ab47d93fc9e286a4.jpg',
+                        status: 'Product Manager • New York, NY',
+                        phone: '+1 (555) 234-5678',
+                        location: 'New York, NY'
+                    },
+                    {
+                        id: 'user3',
+                        username: 'mikechen',
+                        email: 'mike@example.com',
+                        password: 'password123',
+                        name: 'Mike Chen',
+                        avatar: 'https://kimi-web-img.moonshot.cn/img/img.freepik.com/33796f1de011459bb90b9e8caae24265fb5e00a4.jpg',
+                        status: 'UX Designer • Seattle, WA',
+                        phone: '+1 (555) 345-6789',
+                        location: 'Seattle, WA'
+                    },
+                    {
+                        id: 'user4',
+                        username: 'nasmusic',
+                        email: 'nasmusic.ph@gmail.com',
+                        password: 'donguardo888967',
+                        name: 'Nas Music',
+                        avatar: 'https://kimi-web-img.moonshot.cn/img/img.freepik.com/33796f1de011459bb90b9e8caae24265fb5e00a4.jpg',
+                        status: 'Music Producer • Los Angeles, CA',
+                        phone: '+1 (555) 456-7890',
+                        location: 'Los Angeles, CA'
+                    },
+                    {
+                        id: 'user5',
+                        username: 'janzel',
+                        email: 'janzel2015@gmail.com',
+                        password: '123456789',
+                        name: 'Janzel De Villa',
+                        avatar: 'https://kimi-web-img.moonshot.cn/img/tracywrightcorvo.com/45f4a24e606db8c6fc6cb141ab47d93fc9e286a4.jpg',
+                        status: 'Graphic Designer • Chicago, IL',
+                        phone: '+1 (555) 567-8901',
+                        location: 'Chicago, IL'
+                    }
+                ];
+            }
+
+            togglePasswordVisibility() {
+                const passwordInput = document.getElementById('password');
+                const toggleBtn = document.getElementById('togglePassword');
+                
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    toggleBtn.innerHTML = `
+                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path>
+                        </svg>
+                    `;
+                } else {
+                    passwordInput.type = 'password';
+                    toggleBtn.innerHTML = `
+                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.543 7a9.97 9.97 0 011.563 3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path>
+                        </svg>
+                    `;
+                }
+            }
+
+            handleForgotPassword() {
+                this.showNotification('Password reset link sent to your email!');
+            }
+
+            handleSocialLogin(provider) {
+                this.showNotification(`${provider} login coming soon!`);
+            }
+
+            handleSignUp() {
+                this.showNotification('Sign up page coming soon!');
+            }
+
+            showError(message) {
+                const errorDiv = document.getElementById('errorMessage');
+                const errorText = document.getElementById('errorText');
+                errorText.textContent = message;
+                errorDiv.classList.remove('hidden');
+                
+                // Animate error appearance
+                anime({
+                    targets: errorDiv,
+                    opacity: [0, 1],
+                    translateY: [-10, 0],
+                    duration: 300,
+                    easing: 'easeOutQuad'
+                });
+            }
+
+            hideError() {
+                const errorDiv = document.getElementById('errorMessage');
+                errorDiv.classList.add('hidden');
+            }
+
+            showLoading() {
+                document.getElementById('loadingOverlay').classList.remove('hidden');
+            }
+
+            hideLoading() {
+                document.getElementById('loadingOverlay').classList.add('hidden');
+            }
+
+            showSuccessAnimation(callback) {
+                const loginBtn = document.getElementById('loginBtn');
+                loginBtn.innerHTML = `
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    Success!
+                `;
+                loginBtn.style.background = 'linear-gradient(45deg, #10B981, #059669)';
+
+                anime({
+                    targets: loginBtn,
+                    scale: [1, 1.1, 1],
+                    duration: 600,
+                    easing: 'easeOutElastic(1, .8)',
+                    complete: callback
+                });
+            }
+
+            showNotification(message) {
+                const notification = document.createElement('div');
+                notification.className = 'fixed top-4 right-4 bg-emerald-500 text-white px-4 py-2 rounded-lg shadow-lg z-50';
+                notification.textContent = message;
+                document.body.appendChild(notification);
+
+                anime({
+                    targets: notification,
+                    translateX: [300, 0],
+                    opacity: [0, 1],
+                    duration: 300,
+                    easing: 'easeOutQuad'
+                });
+
+                setTimeout(() => {
+                    anime({
+                        targets: notification,
+                        translateX: [0, 300],
+                        opacity: [1, 0],
+                        duration: 300,
+                        easing: 'easeInQuad',
+                        complete: () => {
+                            document.body.removeChild(notification);
+                        }
+                    });
+                }, 3000);
+            }
+
+            initAnimations() {
+                // Animate login card
+                anime({
+                    targets: '.login-card',
+                    scale: [0.9, 1],
+                    opacity: [0, 1],
+                    duration: 800,
+                    easing: 'easeOutBack'
+                });
+
+                // Animate logo and title
+                anime({
+                    targets: '.text-center > div',
+                    translateY: [-30, 0],
+                    opacity: [0, 1],
+                    duration: 600,
+                    delay: 200,
+                    easing: 'easeOutQuad'
+                });
+
+                // Animate form elements
+                anime({
+                    targets: 'form > div',
+                    translateX: [-30, 0],
+                    opacity: [0, 1],
+                    duration: 400,
+                    delay: anime.stagger(100, {start: 400}),
+                    easing: 'easeOutQuad'
+                });
+
+                // Animate social login buttons
+                anime({
+                    targets: '.grid.grid-cols-2.gap-3 > button',
+                    translateY: [20, 0],
+                    opacity: [0, 1],
+                    duration: 400,
+                    delay: anime.stagger(100, {start: 800}),
+                    easing: 'easeOutQuad'
+                });
+            }
+        }
+
+        // Initialize login manager when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            window.loginManager = new LoginManager();
         });
-    }, 3000);
-};
+    </script>
+</body>
+</html>
