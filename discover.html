@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatApp - Discover</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-text { background: linear-gradient(45deg, #10B981, #0EA5E9); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .glass-effect { backdrop-filter: blur(10px); background: rgba(255, 255, 255, 0.9); }
+        .feature-card { transition: all 0.3s ease; }
+        .feature-card:hover { transform: translateY(-4px); box-shadow: 0 12px 30px rgba(0,0,0,0.15); }
+        .stats-gradient { background: linear-gradient(135deg, #10B981, #0EA5E9); }
+        .pulse-dot { animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .floating-element { animation: float 3s ease-in-out infinite; }
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
+    </style>
+</head>
+<body class="bg-gray-50 h-screen overflow-hidden">
+    <!-- Header -->
+    <header class="glass-effect border-b border-gray-200 px-4 py-3 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+            <img src="resources/app-logo.png" alt="ChatApp" class="w-8 h-8">
+            <h1 class="text-xl font-bold gradient-text" style="font-family: 'Poppins', sans-serif;">Discover</h1>
+        </div>
+        <button id="searchBtn" class="p-2 rounded-full hover:bg-gray-100 transition-colors">
+            <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+        </button>
+    </header>
+
+    <!-- Main Content -->
+    <div class="flex-1 overflow-y-auto pb-20">
+        <!-- Featured Section -->
+        <div class="bg-gradient-to-r from-emerald-500 to-blue-500 text-white p-6">
+            <div class="text-center">
+                <h2 class="text-2xl font-bold mb-2">Welcome to ChatApp!</h2>
+                <p class="text-emerald-100 mb-4">Discover amazing features and connect with friends</p>
+                <button id="exploreBtn" class="bg-white text-emerald-600 px-6 py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors">
+                    Explore Features
+                </button>
+            </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="p-4">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Your Activity Overview</h3>
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <div class="bg-white rounded-lg p-4 text-center border border-gray-200">
+                    <div class="text-2xl font-bold text-emerald-500 mb-1" id="todayMessages">23</div>
+                    <div class="text-sm text-gray-600">Messages Today</div>
+                </div>
+                <div class="bg-white rounded-lg p-4 text-center border border-gray-200">
+                    <div class="text-2xl font-bold text-blue-500 mb-1" id="onlineFriends">5</div>
+                    <div class="text-sm text-gray-600">Friends Online</div>
+                </div>
+                <div class="bg-white rounded-lg p-4 text-center border border-gray-200">
+                    <div class="text-2xl font-bold text-purple-500 mb-1" id="newContacts">2</div>
+                    <div class="text-sm text-gray-600">New This Week</div>
+                </div>
+                <div class="bg-white rounded-lg p-4 text-center border border-gray-200">
+                    <div class="text-2xl font-bold text-amber-500 mb-1" id="streakDays">7</div>
+                    <div class="text-sm text-gray-600">Day Streak</div>
+                </div>
+            </div>
+
+            <!-- Message Activity Chart -->
+            <div class="bg-white rounded-lg border border-gray-200 p-4 mb-6">
+                <h4 class="font-semibold text-gray-900 mb-3">Weekly Activity</h4>
+                <div id="activityChart" style="height: 250px;"></div>
+            </div>
+        </div>
+
+        <!-- Featured Features -->
+        <div class="p-4">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Featured Features</h3>
+            <div class="splide" id="featuresCarousel">
+                <div class="splide__track">
+                    <ul class="splide__list">
+                        <li class="splide__slide">
+                            <div class="feature-card bg-white rounded-lg border border-gray-200 p-6 mx-2">
+                                <div class="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center mb-4">
+                                    <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path>
+                                    </svg>
+                                </div>
+                                <h4 class="font-semibold text-gray-900 mb-2">Voice Messages</h4>
+                                <p class="text-sm text-gray-600 mb-4">Send quick voice messages to your friends with crystal clear quality.</p>
+                                <button class="text-emerald-600 text-sm font-medium hover:text-emerald-700">Try Now →</button>
+                            </div>
+                        </li>
+                        <li class="splide__slide">
+                            <div class="feature-card bg-white rounded-lg border border-gray-200 p-6 mx-2">
+                                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                    </svg>
+                                </div>
+                                <h4 class="font-semibold text-gray-900 mb-2">Photo Sharing</h4>
+                                <p class="text-sm text-gray-600 mb-4">Share your favorite moments with high-quality photo sharing.</p>
+                                <button class="text-blue-600 text-sm font-medium hover:text-blue-700">Explore →</button>
+                            </div>
+                        </li>
+                        <li class="splide__slide">
+                            <div class="feature-card bg-white rounded-lg border border-gray-200 p-6 mx-2">
+                                <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
+                                    <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                    </svg>
+                                </div>
+                                <h4 class="font-semibold text-gray-900 mb-2">Group Chats</h4>
+                                <p class="text-sm text-gray-600 mb-4">Create group chats with up to 500 members for better collaboration.</p>
+                                <button class="text-purple-600 text-sm font-medium hover:text-purple-700">Create Group →</button>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Trending Now -->
+        <div class="p-4">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Trending Now</h3>
+            <div class="space-y-3">
+                <div class="bg-white rounded-lg border border-gray-200 p-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-2 h-2 bg-emerald-500 rounded-full pulse-dot"></div>
+                        <div class="flex-1">
+                            <h4 class="font-medium text-gray-900">#TechTalk</h4>
+                            <p class="text-sm text-gray-600">1,234 people discussing technology</p>
+                        </div>
+                        <button class="text-emerald-600 text-sm font-medium hover:text-emerald-700">Join</button>
+                    </div>
+                </div>
+                <div class="bg-white rounded-lg border border-gray-200 p-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-2 h-2 bg-blue-500 rounded-full pulse-dot"></div>
+                        <div class="flex-1">
+                            <h4 class="font-medium text-gray-900">#WeekendPlans</h4>
+                            <p class="text-sm text-gray-600">856 people sharing weekend activities</p>
+                        </div>
+                        <button class="text-blue-600 text-sm font-medium hover:text-blue-700">Join</button>
+                    </div>
+                </div>
+                <div class="bg-white rounded-lg border border-gray-200 p-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-2 h-2 bg-purple-500 rounded-full pulse-dot"></div>
+                        <div class="flex-1">
+                            <h4 class="font-medium text-gray-900">#DesignInspiration</h4>
+                            <p class="text-sm text-gray-600">642 creative professionals sharing ideas</p>
+                        </div>
+                        <button class="text-purple-600 text-sm font-medium hover:text-purple-700">Join</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Media Gallery -->
+        <div class="p-4">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Recent Media</h3>
+            <div class="grid grid-cols-3 gap-2">
+                <div class="aspect-square bg-gray-200 rounded-lg overflow-hidden">
+                    <img src="https://kimi-web-img.moonshot.cn/img/img.freepik.com/893696e1840b1862f4f5b78328dbbe5cfab610d6.jpg" 
+                         alt="Media" class="w-full h-full object-cover hover:scale-105 transition-transform">
+                </div>
+                <div class="aspect-square bg-gray-200 rounded-lg overflow-hidden">
+                    <img src="https://kimi-web-img.moonshot.cn/img/img.freepik.com/7fe69de6222ec3ecb410c9ff4563865004605d49.jpg" 
+                         alt="Media" class="w-full h-full object-cover hover:scale-105 transition-transform">
+                </div>
+                <div class="aspect-square bg-gray-200 rounded-lg overflow-hidden">
+                    <img src="https://kimi-web-img.moonshot.cn/img/pic.mksucai.com/fa79ebe6d332deb6079b43e9dfe15b04216820a3.webp" 
+                         alt="Media" class="w-full h-full object-cover hover:scale-105 transition-transform">
+                </div>
+                <div class="aspect-square bg-gray-200 rounded-lg overflow-hidden">
+                    <img src="https://kimi-web-img.moonshot.cn/img/gd-hbimg.huaban.com/dc5b3a8b93a8010eb59724cf72ee3186416a7294" 
+                         alt="Media" class="w-full h-full object-cover hover:scale-105 transition-transform">
+                </div>
+                <div class="aspect-square bg-gray-200 rounded-lg overflow-hidden">
+                    <img src="https://kimi-web-img.moonshot.cn/img/img.freepik.com/91199e5b20c82d230f0f6e26bfc512dce5163f71.jpg" 
+                         alt="Media" class="w-full h-full object-cover hover:scale-105 transition-transform">
+                </div>
+                <div class="aspect-square bg-gray-200 rounded-lg overflow-hidden">
+                    <img src="https://kimi-web-img.moonshot.cn/img/img.freepik.com/46e40bf3f92b5190fc9c14b180204b1fac0cc204.jpg" 
+                         alt="Media" class="w-full h-full object-cover hover:scale-105 transition-transform">
+                </div>
+            </div>
+            <button class="w-full mt-3 text-emerald-600 text-sm font-medium hover:text-emerald-700">
+                View All Media →
+            </button>
+        </div>
+
+        <!-- Help & Support -->
+        <div class="p-4">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Help & Support</h3>
+            <div class="space-y-3">
+                <button class="w-full text-left bg-white rounded-lg border border-gray-200 p-4 hover:bg-gray-50 transition-colors">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h4 class="font-medium text-gray-900">How to use voice messages?</h4>
+                            <p class="text-sm text-gray-600">Learn how to send and receive voice messages</p>
+                        </div>
+                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </div>
+                </button>
+                <button class="w-full text-left bg-white rounded-lg border border-gray-200 p-4 hover:bg-gray-50 transition-colors">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h4 class="font-medium text-gray-900">Privacy settings explained</h4>
+                            <p class="text-sm text-gray-600">Understand your privacy options</p>
+                        </div>
+                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </div>
+                </button>
+                <button class="w-full text-left bg-white rounded-lg border border-gray-200 p-4 hover:bg-gray-50 transition-colors">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h4 class="font-medium text-gray-900">Contact support</h4>
+                            <p class="text-sm text-gray-600">Get help from our support team</p>
+                        </div>
+                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <!-- App Info -->
+        <div class="p-4">
+            <div class="bg-white rounded-lg border border-gray-200 p-4 text-center">
+                <img src="resources/app-logo.png" alt="ChatApp" class="w-12 h-12 mx-auto mb-3">
+                <h4 class="font-semibold text-gray-900 mb-1">ChatApp</h4>
+                <p class="text-sm text-gray-600 mb-2">Version 2.1.0</p>
+                <p class="text-xs text-gray-500">© 2024 ChatApp Inc. All rights reserved.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-2">
+        <div class="flex justify-around">
+            <a href="index.html" class="flex flex-col items-center py-2 px-3 text-gray-500 hover:text-emerald-500 transition-colors">
+                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                </svg>
+                <span class="text-xs font-medium">Chats</span>
+            </a>
+            <a href="contacts.html" class="flex flex-col items-center py-2 px-3 text-gray-500 hover:text-emerald-500 transition-colors">
+                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                </svg>
+                <span class="text-xs font-medium">Contacts</span>
+            </a>
+            <a href="discover.html" class="flex flex-col items-center py-2 px-3 text-emerald-500">
+                <svg class="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+                <span class="text-xs font-medium">Discover</span>
+            </a>
+            <a href="profile.html" class="flex flex-col items-center py-2 px-3 text-gray-500 hover:text-emerald-500 transition-colors">
+                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                </svg>
+                <span class="text-xs font-medium">Profile</span>
+            </a>
+        </div>
+    </nav>
+
+    <script src="main.js"></script>
+    <script>
+        // Discover page specific functionality
+        class DiscoverManager {
+            constructor() {
+                this.init();
+            }
+
+            init() {
+                this.setupEventListeners();
+                this.renderActivityChart();
+                this.initFeaturesCarousel();
+                this.initAnimations();
+                this.startLiveUpdates();
+            }
+
+            setupEventListeners() {
+                // Header buttons
+                document.getElementById('searchBtn').addEventListener('click', () => this.showSearch());
+                document.getElementById('exploreBtn').addEventListener('click', () => this.exploreFeatures());
+
+                // Feature cards
+                document.querySelectorAll('.feature-card button').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const feature = btn.textContent.trim();
+                        this.showFeatureModal(feature);
+                    });
+                });
+
+                // Trending topics
+                document.querySelectorAll('.pulse-dot').forEach(dot => {
+                    const joinBtn = dot.parentElement.querySelector('button');
+                    joinBtn.addEventListener('click', () => {
+                        const topic = joinBtn.parentElement.querySelector('h4').textContent;
+                        this.joinTrendingTopic(topic);
+                    });
+                });
+
+                // Media gallery
+                document.querySelectorAll('.aspect-square img').forEach(img => {
+                    img.addEventListener('click', () => {
+                        this.openMediaViewer(img.src);
+                    });
+                });
+
+                // Help buttons
+                document.querySelectorAll('.bg-white.rounded-lg.border.border-gray-200.p-4.hover\\:bg-gray-50').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const title = btn.querySelector('h4').textContent;
+                        this.showHelpModal(title);
+                    });
+                });
+            }
+
+            renderActivityChart() {
+                const chartDom = document.getElementById('activityChart');
+                const myChart = echarts.init(chartDom);
+
+                const option = {
+                    color: ['#10B981', '#0EA5E9', '#8B5CF6'],
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'shadow'
+                        }
+                    },
+                    legend: {
+                        data: ['Messages', 'Calls', 'Media'],
+                        bottom: 0
+                    },
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        bottom: '15%',
+                        containLabel: true
+                    },
+                    xAxis: {
+                        type: 'category',
+                        data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                        axisLine: {
+                            lineStyle: {
+                                color: '#E5E7EB'
+                            }
+                        },
+                        axisLabel: {
+                            color: '#6B7280'
+                        }
+                    },
+                    yAxis: {
+                        type: 'value',
+                        axisLine: {
+                            show: false
+                        },
+                        axisTick: {
+                            show: false
+                        },
+                        axisLabel: {
+                            color: '#6B7280'
+                        },
+                        splitLine: {
+                            lineStyle: {
+                                color: '#F3F4F6'
+                            }
+                        }
+                    },
+                    series: [
+                        {
+                            name: 'Messages',
+                            type: 'bar',
+                            data: [45, 52, 38, 47, 56, 67, 42],
+                            itemStyle: {
+                                borderRadius: [4, 4, 0, 0]
+                            }
+                        },
+                        {
+                            name: 'Calls',
+                            type: 'bar',
+                            data: [12, 15, 8, 14, 18, 22, 16],
+                            itemStyle: {
+                                borderRadius: [4, 4, 0, 0]
+                            }
+                        },
+                        {
+                            name: 'Media',
+                            type: 'bar',
+                            data: [8, 12, 6, 9, 15, 18, 11],
+                            itemStyle: {
+                                borderRadius: [4, 4, 0, 0]
+                            }
+                        }
+                    ]
+                };
+
+                myChart.setOption(option);
+
+                // Animate chart on load
+                setTimeout(() => {
+                    myChart.resize();
+                }, 100);
+
+                // Store chart instance for updates
+                this.activityChart = myChart;
+            }
+
+            initFeaturesCarousel() {
+                const splide = new Splide('#featuresCarousel', {
+                    type: 'loop',
+                    perPage: 1,
+                    perMove: 1,
+                    gap: '1rem',
+                    padding: '2rem',
+                    arrows: false,
+                    pagination: true,
+                    autoplay: true,
+                    interval: 4000,
+                    pauseOnHover: true,
+                    breakpoints: {
+                        768: {
+                            perPage: 1,
+                            padding: '1rem'
+                        }
+                    }
+                });
+
+                splide.mount();
+                this.featuresCarousel = splide;
+            }
+
+            showSearch() {
+                this.showNotification('Search feature coming soon!');
+            }
+
+            exploreFeatures() {
+                // Scroll to features section
+                document.querySelector('.splide').scrollIntoView({ 
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+
+                // Highlight features
+                anime({
+                    targets: '.feature-card',
+                    scale: [1, 1.05, 1],
+                    duration: 600,
+                    delay: anime.stagger(200),
+                    easing: 'easeInOutQuad'
+                });
+            }
+
+            showFeatureModal(feature) {
+                this.showNotification(`${feature} feature coming soon!`);
+            }
+
+            joinTrendingTopic(topic) {
+                this.showNotification(`Joined ${topic} conversation!`);
+                
+                // Animate the join button
+                const joinBtn = event.target;
+                joinBtn.textContent = 'Joined!';
+                joinBtn.style.backgroundColor = '#10B981';
+                joinBtn.style.color = 'white';
+                
+                setTimeout(() => {
+                    joinBtn.textContent = 'Join';
+                    joinBtn.style.backgroundColor = '';
+                    joinBtn.style.color = '';
+                }, 2000);
+            }
+
+            openMediaViewer(src) {
+                this.showNotification('Media viewer coming soon!');
+            }
+
+            showHelpModal(title) {
+                this.showNotification(`${title} help article coming soon!`);
+            }
+
+            startLiveUpdates() {
+                // Simulate live updates every 30 seconds
+                setInterval(() => {
+                    this.updateStats();
+                }, 30000);
+
+                // Update trending topics every 2 minutes
+                setInterval(() => {
+                    this.updateTrendingTopics();
+                }, 120000);
+            }
+
+            updateStats() {
+                const stats = [
+                    { id: 'todayMessages', change: Math.floor(Math.random() * 5) - 2 },
+                    { id: 'onlineFriends', change: Math.floor(Math.random() * 3) - 1 },
+                    { id: 'newContacts', change: Math.floor(Math.random() * 2) },
+                    { id: 'streakDays', change: 0 }
+                ];
+
+                stats.forEach(stat => {
+                    const element = document.getElementById(stat.id);
+                    const currentValue = parseInt(element.textContent);
+                    const newValue = Math.max(0, currentValue + stat.change);
+                    
+                    if (newValue !== currentValue) {
+                        anime({
+                            targets: element,
+                            innerHTML: [currentValue, newValue],
+                            duration: 1000,
+                            round: 1,
+                            easing: 'easeInOutQuad'
+                        });
+                    }
+                });
+            }
+
+            updateTrendingTopics() {
+                const topics = [
+                    { name: '#TechTalk', count: Math.floor(Math.random() * 500) + 1000 },
+                    { name: '#WeekendPlans', count: Math.floor(Math.random() * 300) + 800 },
+                    { name: '#DesignInspiration', count: Math.floor(Math.random() * 200) + 600 }
+                ];
+
+                const topicElements = document.querySelectorAll('.pulse-dot');
+                topicElements.forEach((dot, index) => {
+                    const countElement = dot.parentElement.querySelector('p');
+                    const newCount = topics[index].count;
+                    countElement.textContent = `${newCount} people discussing`;
+                });
+            }
+
+            showNotification(message) {
+                const notification = document.createElement('div');
+                notification.className = 'fixed top-4 right-4 bg-emerald-500 text-white px-4 py-2 rounded-lg shadow-lg z-50';
+                notification.textContent = message;
+                document.body.appendChild(notification);
+
+                anime({
+                    targets: notification,
+                    translateX: [300, 0],
+                    opacity: [0, 1],
+                    duration: 300,
+                    easing: 'easeOutQuad'
+                });
+
+                setTimeout(() => {
+                    anime({
+                        targets: notification,
+                        translateX: [0, 300],
+                        opacity: [1, 0],
+                        duration: 300,
+                        easing: 'easeInQuad',
+                        complete: () => {
+                            document.body.removeChild(notification);
+                        }
+                    });
+                }, 3000);
+            }
+
+            initAnimations() {
+                // Animate header
+                anime({
+                    targets: 'header',
+                    translateY: [-50, 0],
+                    opacity: [0, 1],
+                    duration: 600,
+                    easing: 'easeOutQuad'
+                });
+
+                // Animate featured section
+                anime({
+                    targets: '.bg-gradient-to-r',
+                    scale: [0.95, 1],
+                    opacity: [0, 1],
+                    duration: 800,
+                    delay: 200,
+                    easing: 'easeOutQuad'
+                });
+
+                // Animate stats cards
+                anime({
+                    targets: '.bg-white.rounded-lg.p-4.text-center',
+                    translateY: [30, 0],
+                    opacity: [0, 1],
+                    duration: 500,
+                    delay: anime.stagger(100, {start: 400}),
+                    easing: 'easeOutQuad'
+                });
+
+                // Animate activity chart
+                anime({
+                    targets: '#activityChart',
+                    opacity: [0, 1],
+                    translateY: [20, 0],
+                    duration: 600,
+                    delay: 800,
+                    easing: 'easeOutQuad'
+                });
+
+                // Animate feature cards
+                anime({
+                    targets: '.feature-card',
+                    translateX: [50, 0],
+                    opacity: [0, 1],
+                    duration: 500,
+                    delay: anime.stagger(200, {start: 1000}),
+                    easing: 'easeOutQuad'
+                });
+
+                // Animate trending topics
+                anime({
+                    targets: '.pulse-dot',
+                    scale: [0, 1],
+                    duration: 400,
+                    delay: anime.stagger(150, {start: 1200}),
+                    easing: 'easeOutBack'
+                });
+
+                // Animate media gallery
+                anime({
+                    targets: '.aspect-square',
+                    scale: [0.8, 1],
+                    opacity: [0, 1],
+                    duration: 400,
+                    delay: anime.stagger(100, {start: 1400}),
+                    easing: 'easeOutBack'
+                });
+
+                // Animate bottom navigation
+                anime({
+                    targets: 'nav',
+                    translateY: [100, 0],
+                    opacity: [0, 1],
+                    duration: 500,
+                    delay: 1600,
+                    easing: 'easeOutQuad'
+                });
+
+                // Add floating animation to some elements
+                anime({
+                    targets: '.floating-element',
+                    translateY: [-10, 10],
+                    duration: 3000,
+                    direction: 'alternate',
+                    loop: true,
+                    easing: 'easeInOutSine'
+                });
+            }
+        }
+
+        // Initialize discover manager when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            window.discoverManager = new DiscoverManager();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatApp - Profile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-text { background: linear-gradient(45deg, #10B981, #0EA5E9); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .glass-effect { backdrop-filter: blur(10px); background: rgba(255, 255, 255, 0.9); }
+        .profile-card { transition: all 0.3s ease; }
+        .profile-card:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
+        .toggle-switch { transition: all 0.3s ease; }
+        .toggle-switch.active { background: linear-gradient(45deg, #10B981, #0EA5E9); }
+        .stats-card { background: linear-gradient(135deg, #10B981, #0EA5E9); }
+    </style>
+</head>
+<body class="bg-gray-50 h-screen overflow-hidden">
+    <!-- Header -->
+    <header class="glass-effect border-b border-gray-200 px-4 py-3 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+            <img src="resources/app-logo.png" alt="ChatApp" class="w-8 h-8">
+            <h1 class="text-xl font-bold gradient-text" style="font-family: 'Poppins', sans-serif;">Profile</h1>
+        </div>
+        <button id="editProfileBtn" class="text-emerald-500 hover:text-emerald-600 text-sm font-medium">
+            Edit
+        </button>
+    </header>
+
+    <!-- Main Content -->
+    <div class="flex-1 overflow-y-auto pb-20">
+        <!-- Profile Section -->
+        <div class="bg-white border-b border-gray-200 p-6">
+            <div class="text-center">
+                <div class="relative inline-block mb-4">
+                    <img id="profileAvatar" src="https://kimi-web-img.moonshot.cn/img/img.freepik.com/33796f1de011459bb90b9e8caae24265fb5e00a4.jpg" 
+                         alt="Profile" class="w-24 h-24 rounded-full object-cover mx-auto border-4 border-emerald-500">
+                    <button id="changeAvatarBtn" class="absolute bottom-0 right-0 bg-emerald-500 text-white p-2 rounded-full hover:bg-emerald-600 transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                    </button>
+                </div>
+                <h2 id="profileName" class="text-2xl font-bold text-gray-900 mb-2">Alex Johnson</h2>
+                <p id="profileStatus" class="text-gray-600 mb-4">Software Developer • San Francisco, CA</p>
+                <div class="flex justify-center space-x-4 text-sm text-gray-500">
+                    <span>📱 +1 (555) 123-4567</span>
+                    <span>•</span>
+                    <span>📧 alex@example.com</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Section -->
+        <div class="p-4">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Your Activity</h3>
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <div class="stats-card text-white rounded-lg p-4 text-center">
+                    <div class="text-2xl font-bold mb-1" id="totalMessages">156</div>
+                    <div class="text-sm opacity-90">Messages Sent</div>
+                </div>
+                <div class="stats-card text-white rounded-lg p-4 text-center">
+                    <div class="text-2xl font-bold mb-1" id="totalContacts">8</div>
+                    <div class="text-sm opacity-90">Friends</div>
+                </div>
+                <div class="stats-card text-white rounded-lg p-4 text-center">
+                    <div class="text-2xl font-bold mb-1" id="totalGroups">3</div>
+                    <div class="text-sm opacity-90">Groups</div>
+                </div>
+                <div class="stats-card text-white rounded-lg p-4 text-center">
+                    <div class="text-2xl font-bold mb-1" id="activeDays">12</div>
+                    <div class="text-sm opacity-90">Active Days</div>
+                </div>
+            </div>
+
+            <!-- Usage Chart -->
+            <div class="bg-white rounded-lg border border-gray-200 p-4 mb-6">
+                <h4 class="font-semibold text-gray-900 mb-3">Message Activity</h4>
+                <div id="usageChart" style="height: 200px;"></div>
+            </div>
+        </div>
+
+        <!-- Settings Sections -->
+        <div class="bg-white border-t border-gray-200">
+            <!-- Account Settings -->
+            <div class="p-4 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Account Settings</h3>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h4 class="font-medium text-gray-900">Profile Visibility</h4>
+                            <p class="text-sm text-gray-600">Allow others to find you by phone number</p>
+                        </div>
+                        <button class="toggle-switch active w-12 h-6 bg-gray-300 rounded-full relative" data-setting="profileVisibility">
+                            <div class="toggle-dot w-5 h-5 bg-white rounded-full absolute top-0.5 transition-all duration-300" style="left: 1.5rem;"></div>
+                        </button>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h4 class="font-medium text-gray-900">Read Receipts</h4>
+                            <p class="text-sm text-gray-600">Show when you've read messages</p>
+                        </div>
+                        <button class="toggle-switch active w-12 h-6 bg-gray-300 rounded-full relative" data-setting="readReceipts">
+                            <div class="toggle-dot w-5 h-5 bg-white rounded-full absolute top-0.5 transition-all duration-300" style="left: 1.5rem;"></div>
+                        </button>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h4 class="font-medium text-gray-900">Online Status</h4>
+                            <p class="text-sm text-gray-600">Show when you're online</p>
+                        </div>
+                        <button class="toggle-switch active w-12 h-6 bg-gray-300 rounded-full relative" data-setting="onlineStatus">
+                            <div class="toggle-dot w-5 h-5 bg-white rounded-full absolute top-0.5 transition-all duration-300" style="left: 1.5rem;"></div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notification Settings -->
+            <div class="p-4 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Notifications</h3>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h4 class="font-medium text-gray-900">Message Notifications</h4>
+                            <p class="text-sm text-gray-600">Receive notifications for new messages</p>
+                        </div>
+                        <button class="toggle-switch active w-12 h-6 bg-gray-300 rounded-full relative" data-setting="messageNotifications">
+                            <div class="toggle-dot w-5 h-5 bg-white rounded-full absolute top-0.5 transition-all duration-300" style="left: 1.5rem;"></div>
+                        </button>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h4 class="font-medium text-gray-900">Sound Notifications</h4>
+                            <p class="text-sm text-gray-600">Play sound for new messages</p>
+                        </div>
+                        <button class="toggle-switch active w-12 h-6 bg-gray-300 rounded-full relative" data-setting="soundNotifications">
+                            <div class="toggle-dot w-5 h-5 bg-white rounded-full absolute top-0.5 transition-all duration-300" style="left: 1.5rem;"></div>
+                        </button>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h4 class="font-medium text-gray-900">Group Notifications</h4>
+                            <p class="text-sm text-gray-600">Notifications for group messages</p>
+                        </div>
+                        <button class="toggle-switch active w-12 h-6 bg-gray-300 rounded-full relative" data-setting="groupNotifications">
+                            <div class="toggle-dot w-5 h-5 bg-white rounded-full absolute top-0.5 transition-all duration-300" style="left: 1.5rem;"></div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Privacy Settings -->
+            <div class="p-4 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Privacy & Security</h3>
+                <div class="space-y-4">
+                    <button class="w-full text-left p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h4 class="font-medium text-gray-900">Blocked Contacts</h4>
+                                <p class="text-sm text-gray-600">Manage blocked users</p>
+                            </div>
+                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                        </div>
+                    </button>
+                    <button class="w-full text-left p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h4 class="font-medium text-gray-900">Two-Factor Authentication</h4>
+                                <p class="text-sm text-gray-600">Add extra security to your account</p>
+                            </div>
+                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                        </div>
+                    </button>
+                    <button class="w-full text-left p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h4 class="font-medium text-gray-900">Data & Storage</h4>
+                                <p class="text-sm text-gray-600">Manage your data usage</p>
+                            </div>
+                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- App Settings -->
+            <div class="p-4 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">App Settings</h3>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h4 class="font-medium text-gray-900">Dark Mode</h4>
+                            <p class="text-sm text-gray-600">Switch to dark theme</p>
+                        </div>
+                        <button class="toggle-switch w-12 h-6 bg-gray-300 rounded-full relative" data-setting="darkMode">
+                            <div class="toggle-dot w-5 h-5 bg-white rounded-full absolute top-0.5 left-0.5 transition-all duration-300"></div>
+                        </button>
+                    </div>
+                    <button class="w-full text-left p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h4 class="font-medium text-gray-900">Language</h4>
+                                <p class="text-sm text-gray-600">English (US)</p>
+                            </div>
+                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                        </div>
+                    </button>
+                    <button class="w-full text-left p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h4 class="font-medium text-gray-900">Help & Support</h4>
+                                <p class="text-sm text-gray-600">Get help and contact support</p>
+                            </div>
+                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Account Actions -->
+            <div class="p-4">
+                <div class="space-y-3">
+                    <button id="exportDataBtn" class="w-full bg-gray-100 text-gray-700 py-3 rounded-lg hover:bg-gray-200 transition-colors font-medium">
+                        Export My Data
+                    </button>
+                    <button id="logoutBtn" class="w-full bg-amber-500 text-white py-3 rounded-lg hover:bg-amber-600 transition-colors font-medium">
+                        Log Out
+                    </button>
+                    <button id="deleteAccountBtn" class="w-full bg-red-500 text-white py-3 rounded-lg hover:bg-red-600 transition-colors font-medium">
+                        Delete Account
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div id="editProfileModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-lg w-full max-w-md">
+            <div class="p-6">
+                <h3 class="text-lg font-semibold mb-4">Edit Profile</h3>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Name</label>
+                        <input type="text" id="editNameInput" value="Alex Johnson" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                        <input type="text" id="editStatusInput" value="Software Developer • San Francisco, CA" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                    </div>
+                    <div class="flex space-x-3">
+                        <button id="cancelEditBtn" class="flex-1 px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors">
+                            Cancel
+                        </button>
+                        <button id="saveEditBtn" class="flex-1 px-4 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors">
+                            Save Changes
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-2">
+        <div class="flex justify-around">
+            <a href="index.html" class="flex flex-col items-center py-2 px-3 text-gray-500 hover:text-emerald-500 transition-colors">
+                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                </svg>
+                <span class="text-xs font-medium">Chats</span>
+            </a>
+            <a href="contacts.html" class="flex flex-col items-center py-2 px-3 text-gray-500 hover:text-emerald-500 transition-colors">
+                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                </svg>
+                <span class="text-xs font-medium">Contacts</span>
+            </a>
+            <a href="discover.html" class="flex flex-col items-center py-2 px-3 text-gray-500 hover:text-emerald-500 transition-colors">
+                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+                <span class="text-xs font-medium">Discover</span>
+            </a>
+            <a href="profile.html" class="flex flex-col items-center py-2 px-3 text-emerald-500">
+                <svg class="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                </svg>
+                <span class="text-xs font-medium">Profile</span>
+            </a>
+        </div>
+    </nav>
+
+    <script src="main.js"></script>
+    <script>
+        // Profile page specific functionality
+        class ProfileManager {
+            constructor() {
+                this.settings = {
+                    profileVisibility: true,
+                    readReceipts: true,
+                    onlineStatus: true,
+                    messageNotifications: true,
+                    soundNotifications: true,
+                    groupNotifications: true,
+                    darkMode: false
+                };
+                this.init();
+            }
+
+            init() {
+                this.loadSettings();
+                this.setupEventListeners();
+                this.renderUsageChart();
+                this.initAnimations();
+            }
+
+            loadSettings() {
+                const savedSettings = localStorage.getItem('chatapp_settings');
+                if (savedSettings) {
+                    this.settings = { ...this.settings, ...JSON.parse(savedSettings) };
+                }
+                this.updateToggleStates();
+            }
+
+            saveSettings() {
+                localStorage.setItem('chatapp_settings', JSON.stringify(this.settings));
+            }
+
+            setupEventListeners() {
+                // Toggle switches
+                document.querySelectorAll('.toggle-switch').forEach(toggle => {
+                    toggle.addEventListener('click', (e) => {
+                        this.toggleSetting(e.currentTarget);
+                    });
+                });
+
+                // Edit profile
+                document.getElementById('editProfileBtn').addEventListener('click', () => this.showEditModal());
+                document.getElementById('cancelEditBtn').addEventListener('click', () => this.hideEditModal());
+                document.getElementById('saveEditBtn').addEventListener('click', () => this.saveProfile());
+
+                // Change avatar
+                document.getElementById('changeAvatarBtn').addEventListener('click', () => this.changeAvatar());
+
+                // Action buttons
+                document.getElementById('exportDataBtn').addEventListener('click', () => this.exportData());
+                document.getElementById('logoutBtn').addEventListener('click', () => this.logout());
+                document.getElementById('deleteAccountBtn').addEventListener('click', () => this.deleteAccount());
+
+                // Other settings buttons
+                document.querySelectorAll('.p-3.rounded-lg.hover\\:bg-gray-100').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const title = btn.querySelector('h4').textContent;
+                        this.showComingSoon(title);
+                    });
+                });
+            }
+
+            toggleSetting(toggle) {
+                const setting = toggle.dataset.setting;
+                const isActive = toggle.classList.contains('active');
+                const dot = toggle.querySelector('.toggle-dot');
+
+                if (isActive) {
+                    toggle.classList.remove('active');
+                    toggle.style.background = '#D1D5DB';
+                    dot.style.left = '0.125rem';
+                    this.settings[setting] = false;
+                } else {
+                    toggle.classList.add('active');
+                    toggle.style.background = 'linear-gradient(45deg, #10B981, #0EA5E9)';
+                    dot.style.left = '1.5rem';
+                    this.settings[setting] = true;
+                }
+
+                this.saveSettings();
+
+                // Animate toggle
+                anime({
+                    targets: dot,
+                    scale: [1, 1.2, 1],
+                    duration: 200,
+                    easing: 'easeOutBack'
+                });
+
+                // Apply dark mode if changed
+                if (setting === 'darkMode') {
+                    this.applyDarkMode(this.settings[setting]);
+                }
+            }
+
+            updateToggleStates() {
+                document.querySelectorAll('.toggle-switch').forEach(toggle => {
+                    const setting = toggle.dataset.setting;
+                    const dot = toggle.querySelector('.toggle-dot');
+                    
+                    if (this.settings[setting]) {
+                        toggle.classList.add('active');
+                        toggle.style.background = 'linear-gradient(45deg, #10B981, #0EA5E9)';
+                        dot.style.left = '1.5rem';
+                    } else {
+                        toggle.classList.remove('active');
+                        toggle.style.background = '#D1D5DB';
+                        dot.style.left = '0.125rem';
+                    }
+                });
+            }
+
+            showEditModal() {
+                document.getElementById('editProfileModal').classList.remove('hidden');
+                
+                // Animate modal
+                anime({
+                    targets: '#editProfileModal .bg-white',
+                    scale: [0.8, 1],
+                    opacity: [0, 1],
+                    duration: 300,
+                    easing: 'easeOutBack'
+                });
+            }
+
+            hideEditModal() {
+                anime({
+                    targets: '#editProfileModal .bg-white',
+                    scale: [1, 0.8],
+                    opacity: [1, 0],
+                    duration: 200,
+                    easing: 'easeInQuad',
+                    complete: () => {
+                        document.getElementById('editProfileModal').classList.add('hidden');
+                    }
+                });
+            }
+
+            saveProfile() {
+                const name = document.getElementById('editNameInput').value.trim();
+                const status = document.getElementById('editStatusInput').value.trim();
+                
+                if (name) {
+                    document.getElementById('profileName').textContent = name;
+                }
+                
+                if (status) {
+                    document.getElementById('profileStatus').textContent = status;
+                }
+                
+                this.hideEditModal();
+                this.showNotification('Profile updated successfully!');
+            }
+
+            changeAvatar() {
+                const avatars = [
+                    'https://kimi-web-img.moonshot.cn/img/tracywrightcorvo.com/45f4a24e606db8c6fc6cb141ab47d93fc9e286a4.jpg',
+                    'https://kimi-web-img.moonshot.cn/img/img.freepik.com/33796f1de011459bb90b9e8caae24265fb5e00a4.jpg',
+                    'https://kimi-web-img.moonshot.cn/img/images.rawpixel.com/068f7bd92911b9f69d6e398f9bbfd11985239fbc.jpg',
+                    'https://kimi-web-img.moonshot.cn/img/headshots-inc.com/8449031380f3d0f96f847f9d90dc2f301a15e9ad.jpg',
+                    'https://kimi-web-img.moonshot.cn/img/www.profilebakery.com/d1b551532dafe7d6076ca545a500f7eafc3a9774.jpg'
+                ];
+                
+                const currentAvatar = document.getElementById('profileAvatar').src;
+                const currentIndex = avatars.findIndex(avatar => currentAvatar.includes(avatar.split('/').pop()));
+                const nextIndex = (currentIndex + 1) % avatars.length;
+                
+                // Animate avatar change
+                anime({
+                    targets: '#profileAvatar',
+                    scale: [1, 0.8, 1],
+                    duration: 400,
+                    easing: 'easeInOutQuad',
+                    complete: () => {
+                        document.getElementById('profileAvatar').src = avatars[nextIndex];
+                    }
+                });
+                
+                this.showNotification('Avatar updated!');
+            }
+
+            exportData() {
+                this.showNotification('Data export started! Check your email.');
+            }
+
+            logout() {
+                if (confirm('Are you sure you want to log out?')) {
+                    localStorage.removeItem('chatapp_chats');
+                    localStorage.removeItem('chatapp_messages');
+                    localStorage.removeItem('chatapp_contacts');
+                    localStorage.removeItem('chatapp_settings');
+                    
+                    this.showNotification('Logged out successfully!');
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1500);
+                }
+            }
+
+            deleteAccount() {
+                if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+                    this.showNotification('Account deletion request sent.');
+                }
+            }
+
+            applyDarkMode(enabled) {
+                if (enabled) {
+                    document.body.classList.add('dark');
+                    document.body.style.backgroundColor = '#1F2937';
+                } else {
+                    document.body.classList.remove('dark');
+                    document.body.style.backgroundColor = '#F9FAFB';
+                }
+            }
+
+            renderUsageChart() {
+                const chartDom = document.getElementById('usageChart');
+                const myChart = echarts.init(chartDom);
+
+                const option = {
+                    color: ['#10B981', '#0EA5E9'],
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'cross',
+                            label: {
+                                backgroundColor: '#6a7985'
+                            }
+                        }
+                    },
+                    legend: {
+                        data: ['Messages', 'Active Hours'],
+                        bottom: 0
+                    },
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        bottom: '15%',
+                        containLabel: true
+                    },
+                    xAxis: [
+                        {
+                            type: 'category',
+                            boundaryGap: false,
+                            data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+                        }
+                    ],
+                    yAxis: [
+                        {
+                            type: 'value'
+                        }
+                    ],
+                    series: [
+                        {
+                            name: 'Messages',
+                            type: 'line',
+                            stack: 'Total',
+                            smooth: true,
+                            lineStyle: {
+                                width: 3
+                            },
+                            showSymbol: false,
+                            areaStyle: {
+                                opacity: 0.3
+                            },
+                            emphasis: {
+                                focus: 'series'
+                            },
+                            data: [12, 18, 25, 31, 28, 35, 42]
+                        },
+                        {
+                            name: 'Active Hours',
+                            type: 'line',
+                            stack: 'Total',
+                            smooth: true,
+                            lineStyle: {
+                                width: 3
+                            },
+                            showSymbol: false,
+                            areaStyle: {
+                                opacity: 0.3
+                            },
+                            emphasis: {
+                                focus: 'series'
+                            },
+                            data: [8, 12, 15, 18, 16, 22, 28]
+                        }
+                    ]
+                };
+
+                myChart.setOption(option);
+
+                // Animate chart
+                setTimeout(() => {
+                    myChart.resize();
+                }, 100);
+            }
+
+            showComingSoon(feature) {
+                this.showNotification(`${feature} feature coming soon!`);
+            }
+
+            showNotification(message) {
+                const notification = document.createElement('div');
+                notification.className = 'fixed top-4 right-4 bg-emerald-500 text-white px-4 py-2 rounded-lg shadow-lg z-50';
+                notification.textContent = message;
+                document.body.appendChild(notification);
+
+                anime({
+                    targets: notification,
+                    translateX: [300, 0],
+                    opacity: [0, 1],
+                    duration: 300,
+                    easing: 'easeOutQuad'
+                });
+
+                setTimeout(() => {
+                    anime({
+                        targets: notification,
+                        translateX: [0, 300],
+                        opacity: [1, 0],
+                        duration: 300,
+                        easing: 'easeInQuad',
+                        complete: () => {
+                            document.body.removeChild(notification);
+                        }
+                    });
+                }, 3000);
+            }
+
+            initAnimations() {
+                // Animate header
+                anime({
+                    targets: 'header',
+                    translateY: [-50, 0],
+                    opacity: [0, 1],
+                    duration: 600,
+                    easing: 'easeOutQuad'
+                });
+
+                // Animate profile section
+                anime({
+                    targets: '.bg-white',
+                    translateY: [30, 0],
+                    opacity: [0, 1],
+                    duration: 500,
+                    delay: anime.stagger(100),
+                    easing: 'easeOutQuad'
+                });
+
+                // Animate stats cards
+                anime({
+                    targets: '.stats-card',
+                    scale: [0.8, 1],
+                    opacity: [0, 1],
+                    duration: 400,
+                    delay: anime.stagger(100, {start: 300}),
+                    easing: 'easeOutBack'
+                });
+
+                // Animate bottom navigation
+                anime({
+                    targets: 'nav',
+                    translateY: [100, 0],
+                    opacity: [0, 1],
+                    duration: 500,
+                    delay: 600,
+                    easing: 'easeOutQuad'
+                });
+            }
+        }
+
+        // Initialize profile manager when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            window.profileManager = new ProfileManager();
+        });
+    </script>
+</body>
+</html>

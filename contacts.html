@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatApp - Contacts</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-text { background: linear-gradient(45deg, #10B981, #0EA5E9); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .online-indicator { animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .glass-effect { backdrop-filter: blur(10px); background: rgba(255, 255, 255, 0.9); }
+        .contact-card { transition: all 0.3s ease; }
+        .contact-card:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
+        .tab-active { background: linear-gradient(45deg, #10B981, #0EA5E9); }
+    </style>
+</head>
+<body class="bg-gray-50 h-screen overflow-hidden">
+    <!-- Header -->
+    <header class="glass-effect border-b border-gray-200 px-4 py-3 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+            <img src="resources/app-logo.png" alt="ChatApp" class="w-8 h-8">
+            <h1 class="text-xl font-bold gradient-text" style="font-family: 'Poppins', sans-serif;">Contacts</h1>
+        </div>
+        <div class="flex items-center space-x-3">
+            <button id="addContactBtn" class="bg-emerald-500 text-white px-4 py-2 rounded-lg hover:bg-emerald-600 transition-colors text-sm font-medium">
+                Add Contact
+            </button>
+            <button id="searchContactBtn" class="p-2 rounded-full hover:bg-gray-100 transition-colors">
+                <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- Tab Navigation -->
+    <div class="bg-white border-b border-gray-200 px-4 py-3">
+        <div class="flex space-x-1">
+            <button id="friendsTab" class="tab-active text-white px-4 py-2 rounded-lg text-sm font-medium transition-all">
+                Friends
+            </button>
+            <button id="groupsTab" class="text-gray-600 hover:bg-gray-100 px-4 py-2 rounded-lg text-sm font-medium transition-all">
+                Groups
+            </button>
+            <button id="discoverTab" class="text-gray-600 hover:bg-gray-100 px-4 py-2 rounded-lg text-sm font-medium transition-all">
+                Discover
+            </button>
+        </div>
+    </div>
+
+    <!-- Search Bar -->
+    <div id="searchBar" class="bg-white border-b border-gray-200 p-4 hidden">
+        <div class="relative">
+            <input type="text" id="contactSearch" placeholder="Search contacts..." 
+                   class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+            <svg class="w-5 h-5 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 overflow-y-auto pb-20">
+        <!-- Friends Tab Content -->
+        <div id="friendsContent" class="tab-content">
+            <!-- Contact Categories -->
+            <div class="p-4">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-lg font-semibold text-gray-900">Your Friends</h2>
+                    <span id="friendsCount" class="text-sm text-gray-500">8 contacts</span>
+                </div>
+                
+                <!-- Online Friends -->
+                <div class="mb-6">
+                    <h3 class="text-sm font-medium text-gray-600 mb-3">Online Now</h3>
+                    <div id="onlineFriends" class="space-y-3">
+                        <!-- Online friends will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- All Friends -->
+                <div>
+                    <h3 class="text-sm font-medium text-gray-600 mb-3">All Friends</h3>
+                    <div id="allFriends" class="space-y-3">
+                        <!-- All friends will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Groups Tab Content -->
+        <div id="groupsContent" class="tab-content hidden">
+            <div class="p-4">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-lg font-semibold text-gray-900">Your Groups</h2>
+                    <button id="createGroupBtn" class="text-emerald-500 hover:text-emerald-600 text-sm font-medium">
+                        Create Group
+                    </button>
+                </div>
+                
+                <div id="groupsList" class="space-y-3">
+                    <!-- Groups will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Discover Tab Content -->
+        <div id="discoverContent" class="tab-content hidden">
+            <div class="p-4">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">Discover People</h2>
+                
+                <!-- Suggested Contacts -->
+                <div class="mb-6">
+                    <h3 class="text-sm font-medium text-gray-600 mb-3">Suggested for You</h3>
+                    <div id="suggestedContacts" class="space-y-3">
+                        <!-- Suggested contacts will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Nearby People -->
+                <div class="mb-6">
+                    <h3 class="text-sm font-medium text-gray-600 mb-3">People Nearby</h3>
+                    <div id="nearbyPeople" class="space-y-3">
+                        <!-- Nearby people will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Invite Friends -->
+                <div class="bg-emerald-50 rounded-lg p-4">
+                    <h3 class="font-medium text-gray-900 mb-2">Invite Friends</h3>
+                    <p class="text-sm text-gray-600 mb-3">Share ChatApp with your friends and start chatting!</p>
+                    <button id="inviteBtn" class="bg-emerald-500 text-white px-4 py-2 rounded-lg hover:bg-emerald-600 transition-colors text-sm font-medium">
+                        Invite Friends
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Contact Modal -->
+    <div id="addContactModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-lg w-full max-w-md">
+            <div class="p-6">
+                <h3 class="text-lg font-semibold mb-4">Add New Contact</h3>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Username or Phone Number</label>
+                        <input type="text" id="newContactInput" placeholder="Enter username or phone..." 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                    </div>
+                    <div class="flex space-x-3">
+                        <button id="cancelAddContact" class="flex-1 px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors">
+                            Cancel
+                        </button>
+                        <button id="confirmAddContact" class="flex-1 px-4 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors">
+                            Add Contact
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Profile Modal -->
+    <div id="contactProfileModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-lg w-full max-w-md">
+            <div class="p-6 text-center">
+                <img id="profileAvatar" src="" alt="" class="w-24 h-24 rounded-full mx-auto mb-4 object-cover">
+                <h3 id="profileName" class="text-xl font-semibold mb-2"></h3>
+                <p id="profileStatus" class="text-gray-600 mb-4"></p>
+                <div id="profileOnlineStatus" class="flex items-center justify-center mb-4">
+                    <div class="w-3 h-3 bg-emerald-500 rounded-full online-indicator mr-2"></div>
+                    <span class="text-sm text-gray-600">Online now</span>
+                </div>
+                <div class="flex space-x-3">
+                    <button id="messageContactBtn" class="flex-1 px-4 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors">
+                        Message
+                    </button>
+                    <button id="closeProfileBtn" class="flex-1 px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-2">
+        <div class="flex justify-around">
+            <a href="index.html" class="flex flex-col items-center py-2 px-3 text-gray-500 hover:text-emerald-500 transition-colors">
+                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                </svg>
+                <span class="text-xs font-medium">Chats</span>
+            </a>
+            <a href="contacts.html" class="flex flex-col items-center py-2 px-3 text-emerald-500">
+                <svg class="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/>
+                </svg>
+                <span class="text-xs font-medium">Contacts</span>
+            </a>
+            <a href="discover.html" class="flex flex-col items-center py-2 px-3 text-gray-500 hover:text-emerald-500 transition-colors">
+                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+                <span class="text-xs font-medium">Discover</span>
+            </a>
+            <a href="profile.html" class="flex flex-col items-center py-2 px-3 text-gray-500 hover:text-emerald-500 transition-colors">
+                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                </svg>
+                <span class="text-xs font-medium">Profile</span>
+            </a>
+        </div>
+    </nav>
+
+    <script src="main.js"></script>
+    <script>
+        // Contacts page specific functionality
+        class ContactsManager {
+            constructor() {
+                this.currentTab = 'friends';
+                this.contacts = [];
+                this.groups = [];
+                this.init();
+            }
+
+            init() {
+                this.loadData();
+                this.setupEventListeners();
+                this.renderContacts();
+                this.initAnimations();
+            }
+
+            loadData() {
+                // Load from localStorage or ChatApp instance
+                const savedContacts = localStorage.getItem('chatapp_contacts');
+                if (savedContacts) {
+                    this.contacts = JSON.parse(savedContacts);
+                } else if (window.chatApp) {
+                    this.contacts = window.chatApp.contacts;
+                } else {
+                    this.contacts = this.getMockContacts();
+                }
+
+                this.groups = this.getMockGroups();
+            }
+
+            getMockContacts() {
+                return [
+                    {
+                        id: 'contact1',
+                        name: 'Sarah Johnson',
+                        avatar: 'https://kimi-web-img.moonshot.cn/img/tracywrightcorvo.com/45f4a24e606db8c6fc6cb141ab47d93fc9e286a4.jpg',
+                        status: 'Software Developer',
+                        isOnline: true,
+                        lastSeen: new Date().toISOString()
+                    },
+                    {
+                        id: 'contact2',
+                        name: 'Mike Chen',
+                        avatar: 'https://kimi-web-img.moonshot.cn/img/img.freepik.com/33796f1de011459bb90b9e8caae24265fb5e00a4.jpg',
+                        status: 'Product Manager',
+                        isOnline: false,
+                        lastSeen: new Date(Date.now() - 1800000).toISOString()
+                    },
+                    {
+                        id: 'contact3',
+                        name: 'Emily Davis',
+                        avatar: 'https://kimi-web-img.moonshot.cn/img/images.rawpixel.com/068f7bd92911b9f69d6e398f9bbfd11985239fbc.jpg',
+                        status: 'UX Designer',
+                        isOnline: true,
+                        lastSeen: new Date().toISOString()
+                    },
+                    {
+                        id: 'contact4',
+                        name: 'Alex Rodriguez',
+                        avatar: 'https://kimi-web-img.moonshot.cn/img/headshots-inc.com/8449031380f3d0f96f847f9d90dc2f301a15e9ad.jpg',
+                        status: 'Marketing Specialist',
+                        isOnline: false,
+                        lastSeen: new Date(Date.now() - 3600000).toISOString()
+                    },
+                    {
+                        id: 'contact5',
+                        name: 'Lisa Wang',
+                        avatar: 'https://kimi-web-img.moonshot.cn/img/www.profilebakery.com/d1b551532dafe7d6076ca545a500f7eafc3a9774.jpg',
+                        status: 'Data Analyst',
+                        isOnline: true,
+                        lastSeen: new Date().toISOString()
+                    },
+                    {
+                        id: 'contact6',
+                        name: 'David Kim',
+                        avatar: 'https://kimi-web-img.moonshot.cn/img/media.istockphoto.com/931fe7fe4c12d16b6eff1d46fb35eab953769494.jpg',
+                        status: 'DevOps Engineer',
+                        isOnline: false,
+                        lastSeen: new Date(Date.now() - 7200000).toISOString()
+                    },
+                    {
+                        id: 'contact7',
+                        name: 'Rachel Green',
+                        avatar: 'https://kimi-web-img.moonshot.cn/img/t3.ftcdn.net/0ce9154ac87c256b665af2d220a3a754cb1c95a8.jpg',
+                        status: 'Graphic Designer',
+                        isOnline: true,
+                        lastSeen: new Date().toISOString()
+                    },
+                    {
+                        id: 'contact8',
+                        name: 'Tom Wilson',
+                        avatar: 'https://kimi-web-img.moonshot.cn/img/t3.ftcdn.net/2bfd6d9887af2a88e5f2fbcabc0d15238da2f340.jpg',
+                        status: 'Sales Manager',
+                        isOnline: false,
+                        lastSeen: new Date(Date.now() - 5400000).toISOString()
+                    }
+                ];
+            }
+
+            getMockGroups() {
+                return [
+                    {
+                        id: 'group1',
+                        name: 'Project Team',
+                        avatar: 'https://kimi-web-img.moonshot.cn/img/img.freepik.com/885b9daa2d9cd2852c6f4443f0d005ef2809e59f.jpg',
+                        members: 8,
+                        lastMessage: 'Great work on the presentation!',
+                        timestamp: new Date(Date.now() - 1200000).toISOString()
+                    },
+                    {
+                        id: 'group2',
+                        name: 'Weekend Plans',
+                        avatar: 'https://kimi-web-img.moonshot.cn/img/i.pinimg.com/0aeddb43b63769d3de29aad4818ba16da1a55025.jpg',
+                        members: 5,
+                        lastMessage: 'Who\'s up for hiking this Saturday?',
+                        timestamp: new Date(Date.now() - 3600000).toISOString()
+                    },
+                    {
+                        id: 'group3',
+                        name: 'Design Discussion',
+                        avatar: 'https://kimi-web-img.moonshot.cn/img/img.freepik.com/1500429b3eafad80fadff2d8ab8fec624602dce3.jpg',
+                        members: 12,
+                        lastMessage: 'Check out the new mockups',
+                        timestamp: new Date(Date.now() - 7200000).toISOString()
+                    }
+                ];
+            }
+
+            setupEventListeners() {
+                // Tab switching
+                document.getElementById('friendsTab').addEventListener('click', () => this.switchTab('friends'));
+                document.getElementById('groupsTab').addEventListener('click', () => this.switchTab('groups'));
+                document.getElementById('discoverTab').addEventListener('click', () => this.switchTab('discover'));
+
+                // Search
+                document.getElementById('searchContactBtn').addEventListener('click', () => this.toggleSearch());
+                document.getElementById('contactSearch').addEventListener('input', (e) => this.filterContacts(e.target.value));
+
+                // Add contact
+                document.getElementById('addContactBtn').addEventListener('click', () => this.showAddContactModal());
+                document.getElementById('cancelAddContact').addEventListener('click', () => this.hideAddContactModal());
+                document.getElementById('confirmAddContact').addEventListener('click', () => this.addNewContact());
+
+                // Profile modal
+                document.getElementById('closeProfileBtn').addEventListener('click', () => this.hideContactProfile());
+                document.getElementById('messageContactBtn').addEventListener('click', () => this.messageContact());
+
+                // Other buttons
+                document.getElementById('createGroupBtn').addEventListener('click', () => this.showComingSoon('Create Group'));
+                document.getElementById('inviteBtn').addEventListener('click', () => this.showComingSoon('Invite Friends'));
+            }
+
+            switchTab(tab) {
+                this.currentTab = tab;
+                
+                // Update tab buttons
+                document.querySelectorAll('[id$="Tab"]').forEach(btn => {
+                    btn.classList.remove('tab-active', 'text-white');
+                    btn.classList.add('text-gray-600', 'hover:bg-gray-100');
+                });
+                
+                const activeTab = document.getElementById(tab + 'Tab');
+                activeTab.classList.add('tab-active', 'text-white');
+                activeTab.classList.remove('text-gray-600', 'hover:bg-gray-100');
+
+                // Show/hide content
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.add('hidden');
+                });
+                
+                document.getElementById(tab + 'Content').classList.remove('hidden');
+
+                // Render appropriate content
+                if (tab === 'friends') {
+                    this.renderContacts();
+                } else if (tab === 'groups') {
+                    this.renderGroups();
+                } else if (tab === 'discover') {
+                    this.renderDiscover();
+                }
+            }
+
+            renderContacts() {
+                const onlineFriends = document.getElementById('onlineFriends');
+                const allFriends = document.getElementById('allFriends');
+                
+                onlineFriends.innerHTML = '';
+                allFriends.innerHTML = '';
+
+                const onlineContacts = this.contacts.filter(c => c.isOnline);
+                const offlineContacts = this.contacts.filter(c => !c.isOnline);
+
+                // Render online friends
+                onlineContacts.forEach(contact => {
+                    const contactCard = this.createContactCard(contact, true);
+                    onlineFriends.appendChild(contactCard);
+                });
+
+                // Render all friends
+                this.contacts.forEach(contact => {
+                    const contactCard = this.createContactCard(contact, false);
+                    allFriends.appendChild(contactCard);
+                });
+
+                // Update count
+                document.getElementById('friendsCount').textContent = `${this.contacts.length} contacts`;
+            }
+
+            createContactCard(contact, isOnlineSection) {
+                const card = document.createElement('div');
+                card.className = 'contact-card bg-white rounded-lg p-4 border border-gray-200 cursor-pointer';
+                card.dataset.contactId = contact.id;
+
+                const lastSeen = this.formatLastSeen(contact.lastSeen);
+                
+                card.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <div class="relative">
+                            <img src="${contact.avatar}" alt="${contact.name}" class="w-12 h-12 rounded-full object-cover">
+                            ${contact.isOnline ? '<div class="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 border-2 border-white rounded-full online-indicator"></div>' : ''}
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h3 class="font-semibold text-gray-900 truncate">${contact.name}</h3>
+                            <p class="text-sm text-gray-600 truncate">${contact.status}</p>
+                            ${!isOnlineSection && !contact.isOnline ? `<p class="text-xs text-gray-500">Last seen ${lastSeen}</p>` : ''}
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            ${contact.isOnline ? '<div class="w-2 h-2 bg-emerald-500 rounded-full"></div>' : ''}
+                            <button class="message-btn p-2 rounded-full hover:bg-gray-100 transition-colors">
+                                <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                // Add event listeners
+                card.addEventListener('click', (e) => {
+                    if (!e.target.closest('.message-btn')) {
+                        this.showContactProfile(contact);
+                    }
+                });
+
+                const messageBtn = card.querySelector('.message-btn');
+                messageBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.startChatWithContact(contact);
+                });
+
+                return card;
+            }
+
+            renderGroups() {
+                const groupsList = document.getElementById('groupsList');
+                groupsList.innerHTML = '';
+
+                this.groups.forEach(group => {
+                    const groupCard = document.createElement('div');
+                    groupCard.className = 'contact-card bg-white rounded-lg p-4 border border-gray-200 cursor-pointer';
+
+                    const time = new Date(group.timestamp);
+                    const timeStr = this.formatTime(time);
+
+                    groupCard.innerHTML = `
+                        <div class="flex items-center space-x-3">
+                            <img src="${group.avatar}" alt="${group.name}" class="w-12 h-12 rounded-full object-cover">
+                            <div class="flex-1 min-w-0">
+                                <h3 class="font-semibold text-gray-900 truncate">${group.name}</h3>
+                                <p class="text-sm text-gray-600">${group.members} members</p>
+                                <p class="text-sm text-gray-500 truncate">${group.lastMessage}</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-xs text-gray-500">${timeStr}</span>
+                            </div>
+                        </div>
+                    `;
+
+                    groupCard.addEventListener('click', () => {
+                        this.showComingSoon('Group Chat');
+                    });
+
+                    groupsList.appendChild(groupCard);
+                });
+            }
+
+            renderDiscover() {
+                this.renderSuggestedContacts();
+                this.renderNearbyPeople();
+            }
+
+            renderSuggestedContacts() {
+                const suggestedContacts = document.getElementById('suggestedContacts');
+                suggestedContacts.innerHTML = '';
+
+                const suggested = this.contacts.slice(0, 3);
+                
+                suggested.forEach(contact => {
+                    const card = document.createElement('div');
+                    card.className = 'contact-card bg-white rounded-lg p-4 border border-gray-200';
+                    
+                    card.innerHTML = `
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <img src="${contact.avatar}" alt="${contact.name}" class="w-12 h-12 rounded-full object-cover">
+                                <div>
+                                    <h3 class="font-semibold text-gray-900">${contact.name}</h3>
+                                    <p class="text-sm text-gray-600">${contact.status}</p>
+                                </div>
+                            </div>
+                            <button class="add-friend-btn bg-emerald-500 text-white px-3 py-1 rounded-lg hover:bg-emerald-600 transition-colors text-sm">
+                                Add
+                            </button>
+                        </div>
+                    `;
+
+                    card.querySelector('.add-friend-btn').addEventListener('click', () => {
+                        this.showComingSoon('Add Friend');
+                    });
+
+                    suggestedContacts.appendChild(card);
+                });
+            }
+
+            renderNearbyPeople() {
+                const nearbyPeople = document.getElementById('nearbyPeople');
+                nearbyPeople.innerHTML = '';
+
+                const nearby = this.contacts.slice(3, 6);
+                
+                nearby.forEach(contact => {
+                    const card = document.createElement('div');
+                    card.className = 'contact-card bg-white rounded-lg p-4 border border-gray-200';
+                    
+                    card.innerHTML = `
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <img src="${contact.avatar}" alt="${contact.name}" class="w-12 h-12 rounded-full object-cover">
+                                <div>
+                                    <h3 class="font-semibold text-gray-900">${contact.name}</h3>
+                                    <p class="text-sm text-gray-600">0.5 miles away</p>
+                                </div>
+                            </div>
+                            <button class="add-friend-btn bg-emerald-500 text-white px-3 py-1 rounded-lg hover:bg-emerald-600 transition-colors text-sm">
+                                Add
+                            </button>
+                        </div>
+                    `;
+
+                    card.querySelector('.add-friend-btn').addEventListener('click', () => {
+                        this.showComingSoon('Add Friend');
+                    });
+
+                    nearbyPeople.appendChild(card);
+                });
+            }
+
+            toggleSearch() {
+                const searchBar = document.getElementById('searchBar');
+                const searchInput = document.getElementById('contactSearch');
+                
+                searchBar.classList.toggle('hidden');
+                
+                if (!searchBar.classList.contains('hidden')) {
+                    searchInput.focus();
+                }
+            }
+
+            filterContacts(query) {
+                const contactCards = document.querySelectorAll('.contact-card');
+                const lowerQuery = query.toLowerCase();
+
+                contactCards.forEach(card => {
+                    const contactId = card.dataset.contactId;
+                    const contact = this.contacts.find(c => c.id === contactId);
+                    
+                    if (contact && contact.name.toLowerCase().includes(lowerQuery)) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            }
+
+            showAddContactModal() {
+                document.getElementById('addContactModal').classList.remove('hidden');
+                document.getElementById('newContactInput').focus();
+            }
+
+            hideAddContactModal() {
+                document.getElementById('addContactModal').classList.add('hidden');
+                document.getElementById('newContactInput').value = '';
+            }
+
+            addNewContact() {
+                const input = document.getElementById('newContactInput');
+                const username = input.value.trim();
+                
+                if (username) {
+                    this.showComingSoon('Add Contact');
+                    this.hideAddContactModal();
+                }
+            }
+
+            showContactProfile(contact) {
+                document.getElementById('profileAvatar').src = contact.avatar;
+                document.getElementById('profileName').textContent = contact.name;
+                document.getElementById('profileStatus').textContent = contact.status;
+                
+                const onlineStatus = document.getElementById('profileOnlineStatus');
+                if (contact.isOnline) {
+                    onlineStatus.classList.remove('hidden');
+                } else {
+                    onlineStatus.classList.add('hidden');
+                }
+
+                document.getElementById('contactProfileModal').classList.remove('hidden');
+                
+                // Store current contact for messaging
+                this.currentProfileContact = contact;
+            }
+
+            hideContactProfile() {
+                document.getElementById('contactProfileModal').classList.add('hidden');
+            }
+
+            messageContact() {
+                if (this.currentProfileContact) {
+                    // Navigate to chat with this contact
+                    window.location.href = 'index.html';
+                }
+            }
+
+            startChatWithContact(contact) {
+                // Navigate to chat with this contact
+                window.location.href = 'index.html';
+            }
+
+            showComingSoon(feature) {
+                alert(`${feature} feature coming soon!`);
+            }
+
+            formatLastSeen(dateString) {
+                const date = new Date(dateString);
+                const now = new Date();
+                const diff = now - date;
+                const minutes = Math.floor(diff / 60000);
+                const hours = Math.floor(diff / 3600000);
+                const days = Math.floor(diff / 86400000);
+
+                if (minutes < 1) return 'just now';
+                if (minutes < 60) return `${minutes} minutes ago`;
+                if (hours < 24) return `${hours} hours ago`;
+                if (days < 7) return `${days} days ago`;
+                return date.toLocaleDateString();
+            }
+
+            formatTime(date) {
+                const now = new Date();
+                const diff = now - date;
+                const minutes = Math.floor(diff / 60000);
+                const hours = Math.floor(diff / 3600000);
+                const days = Math.floor(diff / 86400000);
+
+                if (minutes < 1) return 'now';
+                if (minutes < 60) return `${minutes}m`;
+                if (hours < 24) return `${hours}h`;
+                if (days < 7) return `${days}d`;
+                return date.toLocaleDateString();
+            }
+
+            initAnimations() {
+                // Animate header
+                anime({
+                    targets: 'header',
+                    translateY: [-50, 0],
+                    opacity: [0, 1],
+                    duration: 600,
+                    easing: 'easeOutQuad'
+                });
+
+                // Animate tab buttons
+                anime({
+                    targets: '[id$="Tab"]',
+                    translateY: [-20, 0],
+                    opacity: [0, 1],
+                    duration: 400,
+                    delay: anime.stagger(100),
+                    easing: 'easeOutQuad'
+                });
+
+                // Animate bottom navigation
+                anime({
+                    targets: 'nav',
+                    translateY: [100, 0],
+                    opacity: [0, 1],
+                    duration: 500,
+                    delay: 300,
+                    easing: 'easeOutQuad'
+                });
+            }
+        }
+
+        // Initialize contacts manager when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            window.contactsManager = new ContactsManager();
+        });
+    </script>
+</body>
+</html>
