@@ -257,9 +257,9 @@ async function handleLogin() {
             localStorage.setItem('userAvatar', 'https://api.dicebear.com/7.x/avataaars/svg?seed=orange&backgroundColor=FFA500&hairColor=000000&accessories=glasses');
             localStorage.setItem('isDemo', 'true');
             localStorage.setItem('isPremium', 'true');
-            localStorage.setItem('premiumSince', new Date().toISOString());
             localStorage.setItem('theme', 'orange');
             
+            // Redirect to chat
             setTimeout(() => {
                 window.location.href = 'index.html';
             }, 1500);
@@ -268,7 +268,6 @@ async function handleLogin() {
         
         // Check demo accounts
         const demoAccount = DEMO_ACCOUNTS.find(acc => acc.email === email);
-        
         if (demoAccount) {
             if (password !== demoAccount.password) {
                 showMessage('Incorrect password');
@@ -276,7 +275,6 @@ async function handleLogin() {
                 return;
             }
             
-            // Create demo user session
             const demoUid = `demo_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
             localStorage.setItem('uid', demoUid);
             localStorage.setItem('userEmail', demoAccount.email);
