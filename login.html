@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Xpress Chat | Galactic Gateway</title>
+<title>Galactic Chat | Star Wars Login</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Rajdhani:wght@500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -70,30 +70,54 @@
     box-shadow: 0 0 50px rgba(0, 170, 255, 0.5);
   }
 
-  .login-container h2 {
-    font-family: 'Orbitron', sans-serif;
+  .logo {
     text-align: center;
-    margin-bottom: 1rem;
+    margin-bottom: 30px;
+    position: relative;
+  }
+
+  .logo h1 {
+    font-family: 'Orbitron', sans-serif;
     color: #00aaff;
-    font-size: 2rem;
-    text-shadow: 0 0 10px #00aaff;
+    font-size: 3rem;
+    text-shadow: 0 0 20px rgba(0, 170, 255, 0.8);
+    margin-bottom: 10px;
+    letter-spacing: 2px;
+  }
+
+  .logo p {
+    color: #88ccff;
+    font-size: 1rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+
+  .logo::after {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    left: 25%;
+    width: 50%;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #00aaff, transparent);
   }
 
   .login-container h3 {
     font-family: 'Orbitron', sans-serif;
     text-align: center;
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
     color: #88ccff;
-    font-size: 1.2rem;
+    font-size: 1.3rem;
+    text-shadow: 0 0 10px rgba(0, 170, 255, 0.5);
   }
 
   .login-container input {
     width: 100%;
-    padding: 12px 16px;
-    margin: 10px 0;
+    padding: 14px 18px;
+    margin: 12px 0;
     background: rgba(255, 255, 255, 0.1);
     border: 1px solid #00aaff;
-    border-radius: 5px;
+    border-radius: 8px;
     color: white;
     font-size: 1rem;
     font-family: 'Rajdhani', sans-serif;
@@ -106,31 +130,33 @@
 
   .login-container input:focus {
     outline: none;
-    box-shadow: 0 0 15px #00aaff;
+    box-shadow: 0 0 20px #00aaff;
     background: rgba(255, 255, 255, 0.15);
-    transform: translateY(-1px);
+    transform: translateY(-2px);
   }
 
   .login-container button {
     width: 100%;
-    padding: 12px;
-    margin: 10px 0;
+    padding: 14px;
+    margin: 12px 0;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     font-family: 'Orbitron', sans-serif;
-    font-size: 1rem;
+    font-size: 1.1rem;
     font-weight: bold;
     cursor: pointer;
     transition: all 0.3s;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: 10px;
+    letter-spacing: 1px;
   }
 
   .login-container button.primary {
     background: linear-gradient(135deg, #00aaff, #0066cc);
     color: white;
+    border: 2px solid #00aaff;
   }
 
   .login-container button.secondary {
@@ -140,27 +166,28 @@
   }
 
   .login-container button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0, 170, 255, 0.4);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0, 170, 255, 0.4);
   }
 
   .login-container button:active {
-    transform: translateY(0);
+    transform: translateY(-1px);
   }
 
   .message {
-    padding: 12px;
-    margin: 10px 0;
-    border-radius: 5px;
+    padding: 12px 20px;
+    margin: 15px 0;
+    border-radius: 8px;
     text-align: center;
     font-weight: bold;
-    animation: slideDown 0.3s ease-out;
+    animation: slideDown 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 1px solid transparent;
   }
 
   @keyframes slideDown {
     from {
       opacity: 0;
-      transform: translateY(-10px);
+      transform: translateY(-15px);
     }
     to {
       opacity: 1;
@@ -169,15 +196,15 @@
   }
 
   .error {
-    background: rgba(255, 0, 0, 0.2);
+    background: rgba(255, 0, 0, 0.15);
     color: #ff8888;
-    border: 1px solid #ff6666;
+    border-color: #ff6666;
   }
 
   .success {
-    background: rgba(0, 255, 100, 0.2);
+    background: rgba(0, 255, 100, 0.15);
     color: #88ff88;
-    border: 1px solid #66ff66;
+    border-color: #66ff66;
   }
 
   .spinner {
@@ -194,79 +221,13 @@
     to { transform: rotate(360deg); }
   }
 
-  /* Demo Accounts Section */
-  .demo-section {
-    margin-top: 25px;
-    padding: 20px;
-    background: rgba(0, 170, 255, 0.08);
-    border-radius: 8px;
-    border: 1px solid rgba(0, 170, 255, 0.3);
-    backdrop-filter: blur(5px);
-  }
-
-  .demo-section h4 {
-    color: #00aaff;
-    margin-bottom: 15px;
-    font-family: 'Orbitron', sans-serif;
-    text-align: center;
-    font-size: 1.1rem;
-  }
-
-  .demo-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-    margin-top: 15px;
-  }
-
-  .demo-account {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 15px;
-    background: rgba(0, 170, 255, 0.15);
-    border: 1px solid rgba(0, 170, 255, 0.3);
-    border-radius: 5px;
-    cursor: pointer;
-    transition: all 0.3s;
-  }
-
-  .demo-account:hover {
-    background: rgba(0, 170, 255, 0.25);
-    transform: translateY(-2px);
-    border-color: #00aaff;
-  }
-
-  .demo-avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    border: 2px solid #00aaff;
-    object-fit: cover;
-  }
-
-  .demo-info {
-    flex: 1;
-  }
-
-  .demo-name {
-    color: white;
-    font-weight: bold;
-    font-size: 0.9rem;
-  }
-
-  .demo-email {
-    color: #88ccff;
-    font-size: 0.8rem;
-  }
-
-  /* Orange Pilot Section */
+  /* Orange Pilot Premium Section */
   .orange-pilot-section {
-    margin-top: 25px;
-    padding: 20px;
-    background: rgba(255, 165, 0, 0.1);
-    border-radius: 8px;
-    border: 1px solid rgba(255, 165, 0, 0.3);
+    margin-top: 30px;
+    padding: 25px;
+    background: rgba(255, 165, 0, 0.08);
+    border-radius: 10px;
+    border: 2px solid rgba(255, 165, 0, 0.3);
     backdrop-filter: blur(5px);
     position: relative;
     overflow: hidden;
@@ -279,47 +240,50 @@
     left: 0;
     right: 0;
     height: 3px;
-    background: linear-gradient(90deg, transparent, #FFA500, transparent);
+    background: linear-gradient(90deg, transparent, #FFA500, #FF8C00, transparent);
   }
 
   .orange-pilot-section h4 {
     color: #FFA500;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
     font-family: 'Orbitron', sans-serif;
     text-align: center;
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: 12px;
+    text-shadow: 0 0 10px rgba(255, 165, 0, 0.5);
   }
 
   .orange-pilot-account {
     display: flex;
     align-items: center;
-    gap: 15px;
-    padding: 15px;
-    background: rgba(255, 165, 0, 0.15);
-    border: 1px solid rgba(255, 165, 0, 0.5);
-    border-radius: 8px;
+    gap: 20px;
+    padding: 20px;
+    background: rgba(255, 165, 0, 0.12);
+    border: 1px solid rgba(255, 165, 0, 0.4);
+    border-radius: 10px;
     cursor: pointer;
     transition: all 0.3s;
+    margin-bottom: 20px;
   }
 
   .orange-pilot-account:hover {
-    background: rgba(255, 165, 0, 0.25);
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(255, 165, 0, 0.2);
+    background: rgba(255, 165, 0, 0.2);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(255, 165, 0, 0.25);
     border-color: #FFA500;
   }
 
   .orange-avatar {
-    width: 60px;
-    height: 60px;
+    width: 70px;
+    height: 70px;
     border-radius: 50%;
     border: 3px solid #FFA500;
     object-fit: cover;
     position: relative;
+    box-shadow: 0 0 20px rgba(255, 165, 0, 0.5);
   }
 
   .orange-avatar::after {
@@ -329,13 +293,14 @@
     right: -5px;
     background: #FFA500;
     color: black;
-    width: 24px;
-    height: 24px;
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 12px;
+    font-size: 14px;
+    border: 2px solid black;
   }
 
   .orange-info {
@@ -345,146 +310,253 @@
   .orange-name {
     color: #FFA500;
     font-weight: bold;
-    font-size: 1rem;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+
+  .orange-email {
+    color: #FFD580;
+    font-size: 0.9rem;
+    margin-bottom: 5px;
     display: flex;
     align-items: center;
     gap: 8px;
   }
 
-  .orange-email {
-    color: #FFD580;
-    font-size: 0.85rem;
-    margin: 5px 0;
-  }
-
   .orange-password {
     color: #FFB347;
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 8px;
   }
 
   .quick-login-btn {
     background: linear-gradient(135deg, #FFA500, #FF8C00);
     color: white;
     border: none;
-    padding: 10px 25px;
-    border-radius: 25px;
+    padding: 12px 30px;
+    border-radius: 30px;
     cursor: pointer;
     font-family: 'Orbitron', sans-serif;
     font-weight: bold;
     letter-spacing: 1px;
     transition: all 0.3s;
     width: 100%;
-    margin-top: 15px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: 12px;
+    font-size: 1rem;
   }
 
   .quick-login-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(255, 165, 0, 0.4);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(255, 165, 0, 0.4);
+    background: linear-gradient(135deg, #FF8C00, #FF6B00);
   }
 
   .premium-badge {
-    background: #FFA500;
+    background: linear-gradient(135deg, #FFA500, #FF8C00);
     color: black;
-    padding: 3px 10px;
-    border-radius: 12px;
-    font-size: 0.7rem;
+    padding: 4px 12px;
+    border-radius: 15px;
+    font-size: 0.75rem;
     font-weight: bold;
     display: inline-flex;
     align-items: center;
     gap: 5px;
+    letter-spacing: 0.5px;
   }
 
+  /* Star Wars Characters Section */
+  .demo-section {
+    margin-top: 30px;
+    padding: 25px;
+    background: rgba(0, 170, 255, 0.08);
+    border-radius: 10px;
+    border: 2px solid rgba(0, 170, 255, 0.3);
+    backdrop-filter: blur(5px);
+  }
+
+  .demo-section h4 {
+    color: #00aaff;
+    margin-bottom: 20px;
+    font-family: 'Orbitron', sans-serif;
+    text-align: center;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    text-shadow: 0 0 10px rgba(0, 170, 255, 0.5);
+  }
+
+  .demo-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-top: 20px;
+  }
+
+  .demo-account {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    background: rgba(0, 170, 255, 0.12);
+    border: 1px solid rgba(0, 170, 255, 0.3);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .demo-account:hover {
+    background: rgba(0, 170, 255, 0.2);
+    transform: translateY(-3px);
+    border-color: #00aaff;
+    box-shadow: 0 5px 20px rgba(0, 170, 255, 0.2);
+  }
+
+  .demo-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 2px solid #00aaff;
+    object-fit: cover;
+  }
+
+  .demo-info {
+    flex: 1;
+  }
+
+  .demo-name {
+    color: white;
+    font-weight: bold;
+    font-size: 0.95rem;
+    margin-bottom: 3px;
+  }
+
+  .demo-email {
+    color: #88ccff;
+    font-size: 0.8rem;
+  }
+
+  .demo-faction {
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-top: 4px;
+    display: inline-block;
+  }
+
+  .jedi-faction {
+    background: rgba(0, 170, 255, 0.3);
+    color: #88ccff;
+  }
+
+  .sith-faction {
+    background: rgba(255, 0, 0, 0.3);
+    color: #ff8888;
+  }
+
+  .rebel-faction {
+    background: rgba(255, 165, 0, 0.3);
+    color: #ffcc88;
+  }
+
+  /* Signup Link */
   .signup-link {
     text-align: center;
-    margin-top: 25px;
-    padding-top: 20px;
-    border-top: 1px solid rgba(0, 170, 255, 0.3);
+    margin-top: 30px;
+    padding-top: 25px;
+    border-top: 2px solid rgba(0, 170, 255, 0.3);
   }
 
   .signup-link a {
     color: #00aaff;
     text-decoration: none;
-    font-size: 0.95rem;
+    font-size: 1rem;
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     transition: all 0.3s;
+    padding: 12px 25px;
+    border-radius: 25px;
+    border: 2px solid rgba(0, 170, 255, 0.3);
+    background: rgba(0, 170, 255, 0.1);
   }
 
   .signup-link a:hover {
     color: #88ddff;
-    text-shadow: 0 0 10px rgba(0, 170, 255, 0.5);
+    background: rgba(0, 170, 255, 0.2);
+    border-color: #00aaff;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 170, 255, 0.3);
   }
 
+  /* Password Toggle */
   .password-toggle {
     position: relative;
   }
 
   .toggle-icon {
     position: absolute;
-    right: 15px;
+    right: 18px;
     top: 50%;
     transform: translateY(-50%);
     color: #88ccff;
     cursor: pointer;
     transition: all 0.3s;
+    background: rgba(0, 0, 0, 0.2);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .toggle-icon:hover {
     color: #00aaff;
+    background: rgba(0, 170, 255, 0.2);
   }
 
-  .logo {
-    text-align: center;
-    margin-bottom: 20px;
-  }
-
-  .logo h1 {
-    font-family: 'Orbitron', sans-serif;
-    color: #00aaff;
-    font-size: 2.5rem;
-    text-shadow: 0 0 20px rgba(0, 170, 255, 0.8);
-    margin-bottom: 5px;
-  }
-
-  .logo p {
+  /* Info Text */
+  .info-text {
     color: #88ccff;
     font-size: 0.9rem;
-    letter-spacing: 2px;
+    text-align: center;
+    margin-top: 15px;
+    line-height: 1.5;
+    padding: 10px;
+    background: rgba(0, 170, 255, 0.1);
+    border-radius: 8px;
+    border: 1px solid rgba(0, 170, 255, 0.2);
   }
 
-  @media (max-width: 600px) {
+  /* Responsive Design */
+  @media (max-width: 768px) {
     .login-container {
-      margin: 20px 15px;
+      margin: 30px 20px;
       padding: 1.5rem;
     }
     
-    .login-container h2 {
-      font-size: 1.5rem;
-    }
-    
     .logo h1 {
-      font-size: 2rem;
+      font-size: 2.2rem;
     }
     
     .demo-grid {
       grid-template-columns: 1fr;
     }
     
-    .demo-account {
-      padding: 8px 12px;
-    }
-    
     .orange-pilot-account {
       flex-direction: column;
       text-align: center;
+      gap: 15px;
     }
     
     .orange-info {
@@ -492,18 +564,93 @@
     }
   }
 
-  @media (max-width: 400px) {
+  @media (max-width: 480px) {
     .login-container {
-      padding: 1rem;
-    }
-    
-    .login-container h2 {
-      font-size: 1.3rem;
+      margin: 20px 15px;
+      padding: 1.2rem;
     }
     
     .logo h1 {
       font-size: 1.8rem;
     }
+    
+    .logo p {
+      font-size: 0.8rem;
+      letter-spacing: 2px;
+    }
+    
+    .login-container h3 {
+      font-size: 1.1rem;
+    }
+    
+    .login-container button {
+      padding: 12px;
+      font-size: 1rem;
+    }
+    
+    .orange-avatar {
+      width: 60px;
+      height: 60px;
+    }
+  }
+
+  /* Animations */
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+  }
+
+  .demo-account:hover .demo-avatar,
+  .orange-pilot-account:hover .orange-avatar {
+    animation: float 2s ease-in-out infinite;
+  }
+
+  /* Loading State */
+  .loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    display: none;
+  }
+
+  .loading-text {
+    color: #00aaff;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.5rem;
+    margin-top: 20px;
+    text-align: center;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #00aaff;
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #FFA500;
   }
 </style>
 </head>
@@ -513,30 +660,38 @@
 <div class="overlay"></div>
 <div class="stars" id="starsContainer"></div>
 
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner" style="width: 60px; height: 60px; border-width: 4px;"></div>
+  <div class="loading-text">INITIALIZING HYPERDRIVE...</div>
+</div>
+
 <div class="login-container">
   <div class="logo">
-    <h1>GALACTIC CHAT</h1>
-    <p>STAR WARS CHARACTER CHAT</p>
+    <h1><i class="fas fa-jedi"></i> GALACTIC CHAT <i class="fas fa-rebel"></i></h1>
+    <p>STAR WARS CHARACTER CHAT SYSTEM</p>
   </div>
 
-  <h3>AUTHORIZATION REQUIRED</h3>
+  <h3><i class="fas fa-satellite"></i> ACCESS THE HOLONET</h3>
 
-  <input type="email" id="email" placeholder="📧 Registered Pilot Email" required>
+  <div class="form-group">
+    <input type="email" id="email" placeholder="📧 Enter your galactic email address" required>
+  </div>
   
   <div class="password-toggle">
-    <input type="password" id="password" placeholder="🔑 Holo-Key (Password)" required>
+    <input type="password" id="password" placeholder="🔑 Enter your security code" required>
     <span class="toggle-icon" id="togglePassword">
       <i class="fas fa-eye"></i>
     </span>
   </div>
 
-  <button class="primary" onclick="handleLogin()">
-    <i class="fas fa-sign-in-alt"></i> AUTHORIZE ENTRY
+  <button class="primary" onclick="handleLogin()" id="loginButton">
+    <i class="fas fa-sign-in-alt"></i> ACTIVATE COMMUNICATION LINK
   </button>
 
-  <!-- Orange Pilot Section -->
+  <!-- Orange Pilot Premium Section -->
   <div class="orange-pilot-section">
-    <h4><i class="fas fa-user-astronaut"></i> ORANGE PILOT ACCOUNT</h4>
+    <h4><i class="fas fa-crown"></i> PREMIUM PILOT ACCESS</h4>
     
     <div class="orange-pilot-account" onclick="fillDemoAccount('orangewareph@gmail.com', 'donguardo888967', 'Orange Pilot')">
       <div class="orange-avatar-container">
@@ -546,9 +701,9 @@
       
       <div class="orange-info">
         <div class="orange-name">
-          Orange Pilot
+          <i class="fas fa-user-astronaut"></i> Orange Pilot
           <span class="premium-badge">
-            <i class="fas fa-crown"></i> PREMIUM
+            <i class="fas fa-star"></i> PREMIUM
           </span>
         </div>
         <div class="orange-email">
@@ -559,82 +714,123 @@
         </div>
       </div>
       
-      <div style="color: #FFA500; font-size: 1.5rem;">
+      <div style="color: #FFA500; font-size: 1.8rem;">
         <i class="fas fa-chevron-right"></i>
       </div>
     </div>
     
-    <button class="quick-login-btn" onclick="fillDemoAccount('orangewareph@gmail.com', 'donguardo888967', 'Orange Pilot')">
-      <i class="fas fa-rocket"></i> QUICK LOGIN AS ORANGE PILOT
+    <button class="quick-login-btn" onclick="fillDemoAccount('orangewareph@gmail.com', 'donguardo888967', 'Orange Pilot')" id="orangeLoginButton">
+      <i class="fas fa-rocket"></i> QUICK LAUNCH AS ORANGE PILOT
     </button>
     
-    <p style="font-size: 0.85rem; color: #FFD580; text-align: center; margin-top: 15px; line-height: 1.4;">
-      <i class="fas fa-info-circle"></i> Special account with premium features and character customization
-    </p>
-  </div>
-
-  <div class="demo-section">
-    <h4><i class="fas fa-jedi"></i> STAR WARS CHARACTERS</h4>
-    <p style="font-size: 0.9rem; color: #88ccff; margin-bottom: 10px; text-align: center;">
-      Try these Star Wars character accounts:
-    </p>
-    <div class="demo-grid" id="demoAccountsGrid">
-      <!-- Demo accounts will be loaded here -->
+    <div class="info-text">
+      <i class="fas fa-info-circle"></i> Premium account with special orange theme, custom avatar selection, and advanced chat features.
     </div>
   </div>
 
+  <!-- Star Wars Characters Section -->
+  <div class="demo-section">
+    <h4><i class="fas fa-users"></i> STAR WARS CHARACTERS</h4>
+    <div class="info-text" style="margin-bottom: 15px;">
+      Click any character to auto-fill credentials and experience their unique personality in chat.
+    </div>
+    <div class="demo-grid" id="demoAccountsGrid">
+      <!-- Star Wars characters will be loaded here -->
+    </div>
+  </div>
+
+  <!-- Signup Link -->
   <div class="signup-link">
     <a href="signup.html">
-      <i class="fas fa-user-plus"></i> Create your own Star Wars character
+      <i class="fas fa-user-plus"></i> CREATE YOUR OWN STAR WARS IDENTITY
     </a>
   </div>
 </div>
 
 <script>
-  // Demo accounts with REAL Star Wars character images
-  const DEMO_ACCOUNTS = [
+  // Star Wars Characters Database
+  const STAR_WARS_CHARACTERS = [
     { 
       email: "luke@jedi.com", 
       password: "force123", 
       name: "Luke Skywalker",
-      avatar: "https://static.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg"
+      avatar: "https://static.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+      faction: "jedi",
+      quote: "The Force is strong with this one."
     },
     { 
       email: "leia@rebel.com", 
       password: "princess123", 
       name: "Princess Leia",
-      avatar: "https://static.wikia.nocookie.net/starwars/images/1/1b/LeiaOrganaheadshot.jpg"
+      avatar: "https://static.wikia.nocookie.net/starwars/images/1/1b/LeiaOrganaheadshot.jpg",
+      faction: "rebel",
+      quote: "Help me, Obi-Wan Kenobi. You're my only hope."
     },
     { 
       email: "han@falcon.com", 
       password: "nerf123", 
       name: "Han Solo",
-      avatar: "https://static.wikia.nocookie.net/starwars/images/6/67/HanSolo.jpg"
+      avatar: "https://static.wikia.nocookie.net/starwars/images/6/67/HanSolo.jpg",
+      faction: "rebel",
+      quote: "Never tell me the odds!"
     },
     { 
       email: "darth@sith.com", 
       password: "vader123", 
       name: "Darth Vader",
-      avatar: "https://static.wikia.nocookie.net/starwars/images/0/0b/Vader.jpg"
+      avatar: "https://static.wikia.nocookie.net/starwars/images/0/0b/Vader.jpg",
+      faction: "sith",
+      quote: "I find your lack of faith disturbing."
     },
     { 
       email: "yoda@jedi.com", 
       password: "master123", 
       name: "Master Yoda",
-      avatar: "https://static.wikia.nocookie.net/starwars/images/6/6f/Yoda_SWSB.png"
+      avatar: "https://static.wikia.nocookie.net/starwars/images/6/6f/Yoda_SWSB.png",
+      faction: "jedi",
+      quote: "Do or do not. There is no try."
     },
     { 
       email: "obiwan@jedi.com", 
       password: "hello123", 
       name: "Obi-Wan Kenobi",
-      avatar: "https://static.wikia.nocookie.net/starwars/images/4/4e/ObiWanHS-SWE.jpg"
+      avatar: "https://static.wikia.nocookie.net/starwars/images/4/4e/ObiWanHS-SWE.jpg",
+      faction: "jedi",
+      quote: "These aren't the droids you're looking for."
+    },
+    { 
+      email: "chewie@falcon.com", 
+      password: "wookie123", 
+      name: "Chewbacca",
+      avatar: "https://static.wikia.nocookie.net/starwars/images/4/48/Chewbacca_TLJ.png",
+      faction: "rebel",
+      quote: "*Wookiee roar*"
+    },
+    { 
+      email: "r2d2@droid.com", 
+      password: "beep123", 
+      name: "R2-D2",
+      avatar: "https://static.wikia.nocookie.net/starwars/images/e/eb/ArtooTFA2-Fathead.png",
+      faction: "rebel",
+      quote: "*Beep boop beep*"
     }
   ];
+
+  // Orange Pilot Account
+  const ORANGE_PILOT = {
+    email: "orangewareph@gmail.com", 
+    password: "donguardo888967", 
+    name: "Orange Pilot",
+    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=orange&backgroundColor=FFA500&hairColor=000000&accessories=glasses",
+    faction: "premium",
+    quote: "The Orange Force is strong with this one.",
+    isPremium: true
+  };
 
   // Create stars animation
   function createStars() {
     const container = document.getElementById('starsContainer');
-    const starCount = 150;
+    const starCount = 200;
     
     for (let i = 0; i < starCount; i++) {
       const star = document.createElement('div');
@@ -642,9 +838,10 @@
       
       const x = Math.random() * 100;
       const y = Math.random() * 100;
-      const size = Math.random() * 3 + 0.5;
+      const size = Math.random() * 4 + 1;
       const delay = Math.random() * 3;
-      const duration = Math.random() * 2 + 1;
+      const duration = Math.random() * 3 + 2;
+      const opacity = Math.random() * 0.8 + 0.2;
       
       star.style.left = `${x}%`;
       star.style.top = `${y}%`;
@@ -652,26 +849,33 @@
       star.style.height = `${size}px`;
       star.style.animationDelay = `${delay}s`;
       star.style.animationDuration = `${duration}s`;
+      star.style.opacity = opacity;
       
       container.appendChild(star);
     }
   }
 
-  // Load demo accounts
-  function loadDemoAccounts() {
+  // Load Star Wars characters
+  function loadStarWarsCharacters() {
     const grid = document.getElementById('demoAccountsGrid');
+    if (!grid) return;
+    
     grid.innerHTML = '';
     
-    DEMO_ACCOUNTS.forEach(account => {
+    STAR_WARS_CHARACTERS.forEach(character => {
       const demoDiv = document.createElement('div');
       demoDiv.className = 'demo-account';
-      demoDiv.onclick = () => fillDemoAccount(account.email, account.password, account.name);
+      demoDiv.onclick = () => fillDemoAccount(character.email, character.password, character.name);
+      demoDiv.title = `Click to login as ${character.name}\n"${character.quote}"`;
       
       demoDiv.innerHTML = `
-        <img src="${account.avatar}" class="demo-avatar" alt="${account.name}">
+        <img src="${character.avatar}" class="demo-avatar" alt="${character.name}">
         <div class="demo-info">
-          <div class="demo-name">${account.name}</div>
-          <div class="demo-email">${account.email}</div>
+          <div class="demo-name">${character.name}</div>
+          <div class="demo-email">${character.email}</div>
+          <div class="demo-faction ${character.faction}-faction">
+            ${character.faction.toUpperCase()}
+          </div>
         </div>
         <i class="fas fa-chevron-right" style="color: #00aaff;"></i>
       `;
@@ -684,7 +888,17 @@
   function fillDemoAccount(email, password, name = '') {
     document.getElementById('email').value = email;
     document.getElementById('password').value = password;
-    showMessage(`${name} credentials loaded. Click "AUTHORIZE ENTRY" to login.`, 'success');
+    
+    if (email === ORANGE_PILOT.email) {
+      showMessage(`Orange Pilot credentials loaded! Click "ACTIVATE COMMUNICATION LINK" to access premium features.`, 'success');
+    } else {
+      const character = STAR_WARS_CHARACTERS.find(c => c.email === email);
+      const quote = character ? `"${character.quote}"` : '';
+      showMessage(`${name} credentials loaded. ${quote}`, 'success');
+    }
+    
+    // Auto-scroll to login button
+    document.getElementById('loginButton').scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
   // Toggle password visibility
@@ -695,9 +909,11 @@
     if (passwordInput.type === 'password') {
       passwordInput.type = 'text';
       toggleIcon.innerHTML = '<i class="fas fa-eye-slash"></i>';
+      toggleIcon.title = 'Hide password';
     } else {
       passwordInput.type = 'password';
       toggleIcon.innerHTML = '<i class="fas fa-eye"></i>';
+      toggleIcon.title = 'Show password';
     }
   }
 
@@ -712,41 +928,220 @@
     
     const container = document.querySelector('.login-container');
     const orangeSection = container.querySelector('.orange-pilot-section');
-    container.insertBefore(msgDiv, orangeSection);
+    
+    if (orangeSection) {
+      container.insertBefore(msgDiv, orangeSection);
+    } else {
+      const loginButton = container.querySelector('button.primary');
+      container.insertBefore(msgDiv, loginButton);
+    }
     
     if (type !== 'error') {
-      setTimeout(() => msgDiv.remove(), 5000);
+      setTimeout(() => {
+        if (msgDiv.parentNode) {
+          msgDiv.style.opacity = '0';
+          msgDiv.style.transform = 'translateY(-10px)';
+          setTimeout(() => {
+            if (msgDiv.parentNode) {
+              msgDiv.remove();
+            }
+          }, 300);
+        }
+      }, 5000);
+    }
+  }
+
+  // Show loading overlay
+  function showLoading(message = 'INITIALIZING HYPERDRIVE...') {
+    const overlay = document.getElementById('loadingOverlay');
+    const loadingText = overlay.querySelector('.loading-text');
+    
+    loadingText.textContent = message;
+    overlay.style.display = 'flex';
+  }
+
+  // Hide loading overlay
+  function hideLoading() {
+    const overlay = document.getElementById('loadingOverlay');
+    overlay.style.display = 'none';
+  }
+
+  // Handle login
+  async function handleLogin() {
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value.trim();
+    const button = document.getElementById('loginButton');
+    const originalText = button.innerHTML;
+    
+    if (!email || !password) {
+      showMessage('Please enter both email and password');
+      return;
+    }
+    
+    // Show loading
+    showLoading('AUTHENTICATING WITH THE FORCE...');
+    button.innerHTML = '<span class="spinner"></span> AUTHENTICATING...';
+    button.disabled = true;
+    
+    // Simulate network delay
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    try {
+      // Special handling for Orange Pilot
+      if (email === ORANGE_PILOT.email) {
+        if (password !== ORANGE_PILOT.password) {
+          throw new Error('Incorrect Orange Pilot security code');
+        }
+        
+        // Store Orange Pilot session
+        const demoUid = `premium_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        localStorage.setItem('uid', demoUid);
+        localStorage.setItem('userEmail', ORANGE_PILOT.email);
+        localStorage.setItem('userName', ORANGE_PILOT.name);
+        localStorage.setItem('userAvatar', ORANGE_PILOT.avatar);
+        localStorage.setItem('isDemo', 'true');
+        localStorage.setItem('isPremium', 'true');
+        localStorage.setItem('premiumSince', new Date().toISOString());
+        localStorage.setItem('theme', 'orange');
+        
+        showLoading('ACTIVATING PREMIUM FEATURES...');
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        window.location.href = 'index.html';
+        return;
+      }
+      
+      // Check Star Wars characters
+      const character = STAR_WARS_CHARACTERS.find(c => c.email === email);
+      if (character) {
+        if (password !== character.password) {
+          throw new Error(`Incorrect security code for ${character.name}`);
+        }
+        
+        // Store character session
+        const demoUid = `char_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        localStorage.setItem('uid', demoUid);
+        localStorage.setItem('userEmail', character.email);
+        localStorage.setItem('userName', character.name);
+        localStorage.setItem('userAvatar', character.avatar);
+        localStorage.setItem('isDemo', 'true');
+        localStorage.setItem('theme', 'light');
+        
+        showLoading(`CONNECTING AS ${character.name.toUpperCase()}...`);
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        window.location.href = 'index.html';
+        return;
+      }
+      
+      // Check registered users
+      const demoUsers = JSON.parse(localStorage.getItem('demoUsers') || '[]');
+      const registeredUser = demoUsers.find(user => user.email === email);
+      
+      if (registeredUser) {
+        // Simple password check for demo users
+        if (password === 'user123' || password.length >= 6) {
+          localStorage.setItem('uid', registeredUser.uid);
+          localStorage.setItem('userEmail', registeredUser.email);
+          localStorage.setItem('userName', registeredUser.name);
+          localStorage.setItem('userAvatar', registeredUser.avatar);
+          localStorage.setItem('isDemo', 'true');
+          localStorage.setItem('theme', 'light');
+          
+          showLoading(`WELCOME BACK, ${registeredUser.name.toUpperCase()}...`);
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          
+          window.location.href = 'index.html';
+          return;
+        } else {
+          throw new Error('Incorrect security code');
+        }
+      }
+      
+      throw new Error('Galactic email not found in our records');
+      
+    } catch (error) {
+      hideLoading();
+      button.innerHTML = originalText;
+      button.disabled = false;
+      showMessage(error.message);
     }
   }
 
   // Initialize on page load
   document.addEventListener('DOMContentLoaded', () => {
     createStars();
-    loadDemoAccounts();
-    document.getElementById('email').focus();
+    loadStarWarsCharacters();
+    
+    // Auto-focus email input
+    const emailInput = document.getElementById('email');
+    if (emailInput) {
+      emailInput.focus();
+      
+      // Load last used email if exists
+      const lastEmail = localStorage.getItem('lastEmail');
+      if (lastEmail) {
+        emailInput.value = lastEmail;
+      }
+    }
     
     // Setup password toggle
-    document.getElementById('togglePassword').addEventListener('click', togglePasswordVisibility);
+    const toggleIcon = document.getElementById('togglePassword');
+    if (toggleIcon) {
+      toggleIcon.addEventListener('click', togglePasswordVisibility);
+      toggleIcon.title = 'Show password';
+    }
     
     // Setup Enter key for login
-    document.getElementById('password').addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        handleLogin();
-      }
+    const passwordInput = document.getElementById('password');
+    if (passwordInput) {
+      passwordInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          handleLogin();
+        }
+      });
+    }
+    
+    // Setup Orange Pilot quick login button
+    const orangeButton = document.getElementById('orangeLoginButton');
+    if (orangeButton) {
+      orangeButton.addEventListener('click', function(e) {
+        fillDemoAccount(ORANGE_PILOT.email, ORANGE_PILOT.password, ORANGE_PILOT.name);
+        
+        // Auto-login after 1 second
+        setTimeout(() => {
+          handleLogin();
+        }, 1000);
+      });
+    }
+    
+    // Add hover effects to demo accounts
+    const demoAccounts = document.querySelectorAll('.demo-account, .orange-pilot-account');
+    demoAccounts.forEach(account => {
+      account.addEventListener('mouseenter', function() {
+        this.style.transform = 'translateY(-3px)';
+      });
+      account.addEventListener('mouseleave', function() {
+        this.style.transform = 'translateY(0)';
+      });
     });
     
-    // Auto-focus email if empty
-    if (!document.getElementById('email').value) {
-      document.getElementById('email').focus();
-    }
+    // Save email on input
+    emailInput?.addEventListener('input', function() {
+      if (this.value.trim()) {
+        localStorage.setItem('lastEmail', this.value.trim());
+      }
+    });
   });
 
   // Make functions globally available
   window.fillDemoAccount = fillDemoAccount;
   window.showMessage = showMessage;
   window.togglePasswordVisibility = togglePasswordVisibility;
+  window.handleLogin = handleLogin;
 </script>
 
+<!-- Auth Script -->
 <script type="module" src="./js/auth.js"></script>
 </body>
 </html>
