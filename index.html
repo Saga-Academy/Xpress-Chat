@@ -18,6 +18,9 @@
     --sith-red: #ff2222;
     --header-bg: rgba(255, 255, 255, 0.9);
     --input-bg: #ffffff;
+    --message-bg: #ffffff;
+    --own-message-bg: #00aaff;
+    --scrollbar-thumb: #00aaff;
   }
 
   [data-theme="dark"] {
@@ -31,6 +34,13 @@
     --sith-red: #ff4444;
     --header-bg: rgba(20, 20, 20, 0.9);
     --input-bg: #2a2a2a;
+    --message-bg: #1a1a1a;
+    --own-message-bg: #ff0000;
+    --scrollbar-thumb: #ff0000;
+  }
+
+  * {
+    box-sizing: border-box;
   }
 
   body {
@@ -58,10 +68,30 @@
     flex-shrink: 0;
     flex-wrap: wrap;
     gap: 10px;
+    z-index: 100;
   }
 
   #chatHeader span {
     font-weight: bold;
+  }
+
+  .user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+    object-fit: cover;
+  }
+
+  .user-name {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
   }
 
   .theme-controls {
@@ -76,6 +106,8 @@
     font-weight: bold;
     cursor: pointer;
     transition: all 0.3s;
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: 0.5px;
   }
 
   .theme-controls button:nth-child(1) { /* JEDI */
@@ -96,6 +128,7 @@
   .theme-controls button:hover {
     transform: scale(1.05);
     box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    filter: brightness(1.1);
   }
 
   #messages {
@@ -105,47 +138,139 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
+    background: var(--bg-primary);
   }
 
-  /* Scrollbar styling (optional, works in WebKit) */
+  /* Scrollbar styling */
   #messages::-webkit-scrollbar {
     width: 8px;
   }
 
+  #messages::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
   #messages::-webkit-scrollbar-thumb {
-    background: var(--accent);
+    background: var(--scrollbar-thumb);
     border-radius: 4px;
+  }
+
+  #messages::-webkit-scrollbar-thumb:hover {
+    filter: brightness(1.2);
   }
 
   .message {
     max-width: 80%;
-    padding: 10px 14px;
+    padding: 12px 16px;
     border-radius: 18px;
     line-height: 1.4;
     word-wrap: break-word;
     align-self: flex-start;
-    background: var(--bg-secondary);
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    background: var(--message-bg);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    border: 1px solid rgba(0,0,0,0.1);
+    animation: messageAppear 0.3s ease-out;
+  }
+
+  @keyframes messageAppear {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   .message.own {
     align-self: flex-end;
-    background: var(--accent);
+    background: var(--own-message-bg);
     color: white;
+    border: none;
+  }
+
+  .message.system {
+    align-self: center;
+    max-width: 90%;
+    background: rgba(0,0,0,0.1);
+    color: var(--text-secondary);
+    font-style: italic;
+    font-size: 0.9rem;
+    text-align: center;
   }
 
   .message .sender {
     font-weight: bold;
     font-size: 0.9rem;
-    opacity: 0.8;
-    margin-bottom: 4px;
+    opacity: 0.9;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .sender-avatar {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 1px solid var(--accent);
+  }
+
+  .message .text {
+    font-size: 1rem;
+    line-height: 1.5;
   }
 
   .message .time {
     font-size: 0.75rem;
-    opacity: 0.6;
+    opacity: 0.7;
     margin-top: 6px;
     text-align: right;
+  }
+
+  .message.own .time {
+    color: rgba(255,255,255,0.8);
+  }
+
+  .typing-indicator {
+    padding: 8px 16px;
+    margin-left: 16px;
+    display: none;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .typing-dots {
+    display: flex;
+    gap: 4px;
+  }
+
+  .typing-dots span {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: typing 1.4s infinite;
+  }
+
+  .typing-dots span:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+
+  .typing-dots span:nth-child(3) {
+    animation-delay: 0.4s;
+  }
+
+  @keyframes typing {
+    0%, 60%, 100% {
+      transform: translateY(0);
+      opacity: 0.3;
+    }
+    30% {
+      transform: translateY(-4px);
+      opacity: 1;
+    }
   }
 
   .inputBar {
@@ -155,6 +280,7 @@
     backdrop-filter: blur(10px);
     border-top: 2px solid var(--accent);
     flex-shrink: 0;
+    gap: 10px;
   }
 
   #msg {
@@ -165,15 +291,22 @@
     background: var(--input-bg);
     color: var(--text-primary);
     font-size: 1rem;
+    font-family: 'Rajdhani', sans-serif;
+    transition: all 0.3s;
   }
 
   #msg:focus {
     outline: none;
-    box-shadow: 0 0 8px var(--accent);
+    box-shadow: 0 0 12px var(--accent);
+    transform: scale(1.01);
+  }
+
+  #msg::placeholder {
+    color: var(--text-secondary);
+    opacity: 0.7;
   }
 
   .inputBar button {
-    margin-left: 10px;
     padding: 0 24px;
     border: none;
     border-radius: 30px;
@@ -182,23 +315,119 @@
     font-weight: bold;
     cursor: pointer;
     transition: all 0.3s;
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: 0.5px;
+    min-width: 100px;
   }
 
   .inputBar button:hover {
     background: var(--sith-red);
     transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(255,0,0,0.3);
+  }
+
+  .inputBar button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .empty-state {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-secondary);
+  }
+
+  .empty-state h3 {
+    font-family: 'Orbitron', sans-serif;
+    margin-bottom: 10px;
+    color: var(--accent);
+  }
+
+  .empty-state p {
+    max-width: 300px;
+    line-height: 1.5;
+  }
+
+  /* Notification styles */
+  .notification {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    padding: 12px 20px;
+    background: var(--header-bg);
+    border: 2px solid var(--accent);
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    z-index: 1000;
+    animation: slideIn 0.3s ease-out;
+    display: none;
+  }
+
+  @keyframes slideIn {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  /* Star Wars title flair */
+  .sector-title {
+    font-family: 'Orbitron', sans-serif;
+    color: var(--accent);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-size: 1rem;
+  }
+
+  .online-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.9rem;
+  }
+
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #4CAF50;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
   }
 
   /* Mobile optimizations */
-  @media (max-width: 600px) {
+  @media (max-width: 768px) {
     #chatHeader {
-      font-size: 1rem;
       padding: 10px 12px;
+      font-size: 1rem;
+    }
+
+    .user-name {
+      display: none;
     }
 
     .theme-controls button {
       padding: 6px 10px;
       font-size: 0.9rem;
+      min-width: 70px;
     }
 
     #messages {
@@ -207,7 +436,7 @@
 
     .message {
       max-width: 90%;
-      padding: 10px 12px;
+      padding: 10px 14px;
     }
 
     .inputBar {
@@ -220,79 +449,294 @@
 
     .inputBar button {
       padding: 0 20px;
+      min-width: 80px;
+    }
+
+    .sector-title {
+      font-size: 0.9rem;
     }
   }
 
-  /* Star Wars title flair */
-  #chatHeader span:first-child {
-    font-family: 'Orbitron', sans-serif;
-    color: var(--accent);
-    letter-spacing: 1px;
+  @media (max-width: 480px) {
+    #chatHeader {
+      flex-direction: column;
+      gap: 8px;
+      text-align: center;
+    }
+
+    .user-info {
+      order: 3;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .theme-controls {
+      order: 2;
+    }
+
+    .sector-title {
+      order: 1;
+    }
+
+    .message {
+      max-width: 95%;
+    }
+  }
+
+  /* Loading animation */
+  .loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+  }
+
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(0,0,0,0.1);
+    border-radius: 50%;
+    border-top-color: var(--accent);
+    animation: spin 1s ease-in-out infinite;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
   }
 </style>
 </head>
-<body data-theme="light"> <!-- default light -->
+<body data-theme="light">
 
   <div id="chatHeader">
-    <span>Sector: <b id="roomName"></b></span>
-    <div class="theme-controls">
-      <button onclick="switchSide('light')">JEDI</button>
-      <button onclick="switchSide('dark')">SITH</button>
-      <button onclick="logout()">LEAVE</button>
+    <div class="sector-title">
+      Sector: <b id="roomName">CORUSCANT_CENTRAL</b>
     </div>
-    <span id="onlineCount"></span>
+    
+    <div class="theme-controls">
+      <button onclick="switchSide('light')" title="Jedi Theme">
+        <span class="theme-icon">⚪</span> JEDI
+      </button>
+      <button onclick="switchSide('dark')" title="Sith Theme">
+        <span class="theme-icon">🔴</span> SITH
+      </button>
+      <button onclick="logout()" title="Leave Chat">
+        <span class="theme-icon">🚀</span> LEAVE
+      </button>
+    </div>
+
+    <div class="user-info">
+      <img id="userAvatar" class="user-avatar" src="https://api.dicebear.com/7.x/avataaars/svg?seed=user" alt="Avatar">
+      <span class="user-name" id="userName">Pilot</span>
+      <div class="online-status">
+        <span class="status-dot"></span>
+        <span id="onlineCount">Online: --</span>
+      </div>
+    </div>
   </div>
 
   <div id="messages">
-    <!-- Messages will be appended here by chat.js -->
-    <!-- Example structure:
-    <div class="message">
-      <div class="sender">User123</div>
-      Hello there!
-      <div class="time">12:45</div>
+    <!-- Loading initial state -->
+    <div class="loading">
+      <div class="spinner"></div>
     </div>
-    <div class="message own">
-      <div class="sender">You</div>
-      General Kenobi!
-      <div class="time">12:46</div>
+  </div>
+
+  <div class="typing-indicator" id="typingIndicator">
+    <div class="typing-dots">
+      <span></span>
+      <span></span>
+      <span></span>
     </div>
-    -->
+    <span id="typingUser">Someone is typing...</span>
   </div>
 
   <div class="inputBar">
-    <input id="msg" placeholder="Transmit signal..." autocomplete="off">
-    <button onclick="send()">SEND</button>
+    <input id="msg" placeholder="Transmit signal through the holonet..." autocomplete="off">
+    <button onclick="sendMessage()" id="sendButton">SEND</button>
   </div>
 
+  <!-- Notification container -->
+  <div id="notification" class="notification"></div>
+
   <script>
-    // Security Guard
+    // Enhanced security check
     if (!localStorage.getItem("uid")) {
       window.location.href = "login.html";
     }
 
-    // Functions will be overridden by chat.js
+    // Load user info on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      // Load saved theme
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      document.body.dataset.theme = savedTheme;
+      
+      // Load user info
+      const userName = localStorage.getItem('userName') || 
+                      localStorage.getItem('userEmail')?.split('@')[0] || 
+                      'Pilot';
+      const userAvatar = localStorage.getItem('userAvatar') || 
+                        `https://api.dicebear.com/7.x/avataaars/svg?seed=${localStorage.getItem('uid')}`;
+      
+      document.getElementById('userName').textContent = userName;
+      document.getElementById('userAvatar').src = userAvatar;
+      
+      // Apply theme-specific styling
+      updateThemeColors(savedTheme);
+    });
+
+    // Switch theme with enhanced effects
     function switchSide(side) {
-      document.body.dataset.theme = side;
+      const currentTheme = document.body.dataset.theme;
+      if (currentTheme === side) return;
+      
+      // Add transition effect
+      document.body.style.opacity = '0.8';
+      
+      setTimeout(() => {
+        document.body.dataset.theme = side;
+        localStorage.setItem('theme', side);
+        updateThemeColors(side);
+        document.body.style.opacity = '1';
+        
+        // Show notification
+        showNotification(`Switched to ${side === 'light' ? 'JEDI' : 'SITH'} theme`);
+      }, 200);
     }
 
-    function logout() {
-      localStorage.removeItem("uid");
-      localStorage.removeItem("userEmail");
-      window.location.href = "login.html";
+    // Update theme-specific colors
+    function updateThemeColors(theme) {
+      const root = document.documentElement;
+      if (theme === 'dark') {
+        root.style.setProperty('--scrollbar-thumb', '#ff0000');
+        root.style.setProperty('--own-message-bg', '#ff0000');
+      } else {
+        root.style.setProperty('--scrollbar-thumb', '#00aaff');
+        root.style.setProperty('--own-message-bg', '#00aaff');
+      }
     }
 
-    function send() {
-      // Will be overridden by chat.js
-      console.log("Send function placeholder");
+    // Enhanced logout function
+    async function logout() {
+      if (confirm("Are you sure you want to leave the Galactic Chat?")) {
+        // Show leaving animation
+        document.body.style.opacity = '0.7';
+        
+        // Clear all user data
+        const itemsToRemove = [
+          'uid', 'userEmail', 'userName', 'userAvatar', 
+          'isDemo', 'theme', 'lastMessageId'
+        ];
+        
+        itemsToRemove.forEach(item => localStorage.removeItem(item));
+        
+        // Add delay for smooth transition
+        setTimeout(() => {
+          window.location.href = "login.html";
+        }, 500);
+      }
     }
+
+    // Send message function (will be overridden by chat.js)
+    function sendMessage() {
+      const messageInput = document.getElementById('msg');
+      const message = messageInput.value.trim();
+      
+      if (message) {
+        console.log("Sending message:", message);
+        // This will be overridden by chat.js
+      }
+    }
+
+    // Show notification
+    function showNotification(message, duration = 3000) {
+      const notification = document.getElementById('notification');
+      notification.textContent = message;
+      notification.style.display = 'block';
+      
+      setTimeout(() => {
+        notification.style.display = 'none';
+      }, duration);
+    }
+
+    // Show typing indicator
+    function showTypingIndicator(userName) {
+      const indicator = document.getElementById('typingIndicator');
+      const typingUser = document.getElementById('typingUser');
+      
+      typingUser.textContent = `${userName || 'Someone'} is typing...`;
+      indicator.style.display = 'flex';
+      
+      // Clear after 3 seconds
+      clearTimeout(window.typingTimeout);
+      window.typingTimeout = setTimeout(() => {
+        indicator.style.display = 'none';
+      }, 3000);
+    }
+
+    // Handle Enter key for sending
+    document.getElementById('msg').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+
+    // Handle typing indicator
+    let typingTimer;
+    document.getElementById('msg').addEventListener('input', function() {
+      // Clear existing timer
+      clearTimeout(typingTimer);
+      
+      // Start new timer
+      typingTimer = setTimeout(() => {
+        // Typing stopped
+      }, 1000);
+    });
+
+    // Add system message helper
+    function addSystemMessage(text) {
+      const messagesDiv = document.getElementById('messages');
+      const loadingDiv = messagesDiv.querySelector('.loading');
+      
+      if (loadingDiv) {
+        loadingDiv.remove();
+      }
+      
+      const messageDiv = document.createElement('div');
+      messageDiv.className = 'message system';
+      messageDiv.innerHTML = `
+        <div class="text">${text}</div>
+        <div class="time">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+      `;
+      
+      messagesDiv.appendChild(messageDiv);
+      scrollToBottom();
+    }
+
+    // Scroll to bottom helper
+    function scrollToBottom() {
+      const messagesDiv = document.getElementById('messages');
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    // Initialize with welcome message
+    setTimeout(() => {
+      const userName = localStorage.getItem('userName') || 
+                      localStorage.getItem('userEmail')?.split('@')[0] || 
+                      'Pilot';
+      addSystemMessage(`Welcome to Galactic Chat, ${userName}! May the Force be with you.`);
+    }, 1000);
+
+    // Make functions globally available for chat.js
+    window.switchSide = switchSide;
+    window.logout = logout;
+    window.sendMessage = sendMessage;
+    window.showTypingIndicator = showTypingIndicator;
+    window.addSystemMessage = addSystemMessage;
+    window.scrollToBottom = scrollToBottom;
+    window.showNotification = showNotification;
   </script>
 
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-analytics-compat.js"></script>
-
-  <script type="module" src="js/chat.js"></script>
+  <script type="module" src="./js/chat.js"></script>
 </body>
 </html>
