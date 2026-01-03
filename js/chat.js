@@ -1,417 +1,430 @@
-// chat.js - UPDATED
-import { auth, db } from './firebase-config.js';
+// chat.js - Complete chat functionality
 
-// DOM Elements
-const messagesContainer = document.getElementById('messages');
-const messageInput = document.getElementById('msg');
-const sendButton = document.querySelector('.inputBar button');
-const roomNameElement = document.getElementById('roomName');
-const onlineCountElement = document.getElementById('onlineCount');
+// Demo messages storage
+const DEMO_MESSAGES = [
+    {
+        id: 'msg1',
+        text: "Welcome to the Galactic Chat!",
+        senderName: "System",
+        senderAvatar: "https://static.wikia.nocookie.net/starwars/images/6/6f/Yoda_SWSB.png",
+        timestamp: new Date(Date.now() - 3600000),
+        type: 'system'
+    },
+    {
+        id: 'msg2',
+        text: "The force is strong with this chat.",
+        senderName: "Luke Skywalker",
+        senderAvatar: "https://static.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+        timestamp: new Date(Date.now() - 1800000),
+        type: 'character'
+    },
+    {
+        id: 'msg3',
+        text: "I find your lack of faith disturbing.",
+        senderName: "Darth Vader",
+        senderAvatar: "https://static.wikia.nocookie.net/starwars/images/0/0b/Vader.jpg",
+        timestamp: new Date(Date.now() - 900000),
+        type: 'character'
+    },
+    {
+        id: 'msg4',
+        text: "Never tell me the odds!",
+        senderName: "Han Solo",
+        senderAvatar: "https://static.wikia.nocookie.net/starwars/images/6/67/HanSolo.jpg",
+        timestamp: new Date(Date.now() - 600000),
+        type: 'character'
+    }
+];
+
+// Star Wars character responses
+const STAR_WARS_RESPONSES = [
+    {
+        name: "Luke Skywalker",
+        avatar: "https://static.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+        responses: [
+            "The force is strong with this one.",
+            "I'll never turn to the dark side.",
+            "I am a Jedi, like my father before me.",
+            "The force will be with you, always."
+        ]
+    },
+    {
+        name: "Darth Vader",
+        avatar: "https://static.wikia.nocookie.net/starwars/images/0/0b/Vader.jpg",
+        responses: [
+            "I find your lack of faith disturbing.",
+            "The force is strong with you.",
+            "I am your father.",
+            "The circle is now complete."
+        ]
+    },
+    {
+        name: "Yoda",
+        avatar: "https://static.wikia.nocookie.net/starwars/images/6/6f/Yoda_SWSB.png",
+        responses: [
+            "Do or do not. There is no try.",
+            "Fear is the path to the dark side.",
+            "The greatest teacher, failure is.",
+            "Size matters not."
+        ]
+    },
+    {
+        name: "Han Solo",
+        avatar: "https://static.wikia.nocookie.net/starwars/images/6/67/HanSolo.jpg",
+        responses: [
+            "Never tell me the odds!",
+            "I've got a bad feeling about this.",
+            "You know, sometimes I amaze even myself.",
+            "It's the ship that made the Kessel Run in less than twelve parsecs."
+        ]
+    },
+    {
+        name: "Princess Leia",
+        avatar: "https://static.wikia.nocookie.net/starwars/images/1/1b/LeiaOrganaheadshot.jpg",
+        responses: [
+            "Help me Obi-Wan Kenobi, you're my only hope.",
+            "Aren't you a little short for a stormtrooper?",
+            "Somebody has to save our skins.",
+            "I'd just as soon kiss a Wookiee."
+        ]
+    },
+    {
+        name: "Obi-Wan Kenobi",
+        avatar: "https://static.wikia.nocookie.net/starwars/images/4/4e/ObiWanHS-SWE.jpg",
+        responses: [
+            "These aren't the droids you're looking for.",
+            "The force will be with you, always.",
+            "You were the chosen one!",
+            "Hello there!"
+        ]
+    },
+    {
+        name: "Chewbacca",
+        avatar: "https://static.wikia.nocookie.net/starwars/images/4/48/Chewbacca_TLJ.png",
+        responses: [
+            "*Angry Wookiee noises*",
+            "*Happy Wookiee growls*",
+            "*Confused Wookiee sounds*",
+            "*Excited Wookiee roar*"
+        ]
+    },
+    {
+        name: "C-3PO",
+        avatar: "https://static.wikia.nocookie.net/starwars/images/3/3f/C-3PO_TLJ_Card_Trader_Award_Card.png",
+        responses: [
+            "We're doomed!",
+            "R2-D2, where are you?",
+            "I am fluent in over six million forms of communication.",
+            "This is madness!"
+        ]
+    }
+];
 
 // Global variables
-let currentUser = null;
-let userProfile = null;
-let unsubscribeMessages = null;
-let unsubscribeOnline = null;
-const roomId = 'main';
-
-// Import Firebase services for serverTimestamp
-import { serverTimestamp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+let demoMessages = [];
+let isTyping = false;
+let typingTimeout = null;
 
 // Initialize chat
-async function initChat() {
-    try {
-        // Check if user is authenticated
-        const uid = localStorage.getItem('uid');
-        const isDemo = localStorage.getItem('isDemo') === 'true';
-        
-        if (!uid) {
-            window.location.href = 'login.html';
-            return;
-        }
-        
-        if (isDemo) {
-            // Setup demo user
-            currentUser = {
-                uid: uid,
-                email: localStorage.getItem('userEmail'),
-                displayName: localStorage.getItem('userName') || 'Demo Pilot',
-                avatar: localStorage.getItem('userAvatar') || `https://api.dicebear.com/7.x/avataaars/svg?seed=${uid}`
-            };
-            userProfile = currentUser;
-            
-            // Demo users don't need Firebase auth
-            setupChat();
-            return;
-        }
-        
-        // Regular Firebase user
-        currentUser = auth.currentUser;
-        
-        if (!currentUser) {
-            // Try to sign in with stored UID
-            try {
-                // For simplicity, we'll redirect to login
-                window.location.href = 'login.html';
-                return;
-            } catch (error) {
-                console.error('Auth error:', error);
-                window.location.href = 'login.html';
-                return;
-            }
-        }
-        
-        // Load user profile from Firestore
-        const userDoc = await db.collection('users').doc(currentUser.uid).get();
-        if (userDoc.exists) {
-            userProfile = userDoc.data();
-            
-            // Apply saved theme
-            if (userProfile.theme) {
-                document.body.dataset.theme = userProfile.theme;
-                localStorage.setItem('theme', userProfile.theme);
-            }
-            
-            // Update online status
-            await db.collection('users').doc(currentUser.uid).update({
-                online: true,
-                lastSeen: new Date()
-            });
-        } else {
-            // Create profile if it doesn't exist
-            userProfile = {
-                displayName: currentUser.email?.split('@')[0] || 'User',
-                avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${currentUser.uid}`,
-                theme: 'light'
-            };
-            await db.collection('users').doc(currentUser.uid).set({
-                ...userProfile,
-                uid: currentUser.uid,
-                email: currentUser.email,
-                createdAt: new Date(),
-                online: true
-            });
-        }
-        
-        setupChat();
-        
-    } catch (error) {
-        console.error('Chat initialization error:', error);
-        // If demo mode fails, still try to set up basic chat
-        if (localStorage.getItem('isDemo')) {
-            currentUser = {
-                uid: localStorage.getItem('uid'),
-                displayName: localStorage.getItem('userName') || 'Demo User',
-                avatar: localStorage.getItem('userAvatar') || `https://api.dicebear.com/7.x/avataaars/svg?seed=demo`
-            };
-            userProfile = currentUser;
-            setupChat();
-        } else {
-            alert('Failed to initialize chat. Please refresh or login again.');
-        }
+document.addEventListener('DOMContentLoaded', function() {
+    // Check if user is authenticated
+    if (!localStorage.getItem("uid")) {
+        window.location.href = "login.html";
+        return;
+    }
+    
+    // Load demo messages
+    loadDemoMessages();
+    
+    // Setup chat functionality
+    setupChat();
+    
+    // Load initial messages
+    setTimeout(() => {
+        loadInitialMessages();
+    }, 1000);
+});
+
+// Load demo messages from localStorage
+function loadDemoMessages() {
+    const storedMessages = localStorage.getItem('demoMessages');
+    if (storedMessages) {
+        demoMessages = JSON.parse(storedMessages);
+    } else {
+        // Initialize with demo messages
+        demoMessages = DEMO_MESSAGES.map(msg => ({
+            ...msg,
+            timestamp: msg.timestamp.toISOString()
+        }));
+        localStorage.setItem('demoMessages', JSON.stringify(demoMessages));
     }
 }
 
 // Setup chat functionality
 function setupChat() {
-    roomNameElement.textContent = 'CORUSCANT_CENTRAL';
+    const messageInput = document.getElementById('msg');
+    const sendButton = document.getElementById('sendButton');
     
-    // Load saved theme
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme) {
-        document.body.dataset.theme = savedTheme;
-    }
-    
-    loadMessages();
-    setupOnlineUsers();
-    setupMessageInput();
-    setupVisibilityHandler();
-    
-    // Auto-scroll to bottom
-    setTimeout(() => {
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
-    }, 500);
-}
-
-// Load and listen for messages
-function loadMessages() {
-    if (unsubscribeMessages) unsubscribeMessages();
-    
-    unsubscribeMessages = db.collection('messages')
-        .where('roomId', '==', roomId)
-        .orderBy('timestamp', 'asc')
-        .onSnapshot((snapshot) => {
-            // Clear messages container
-            messagesContainer.innerHTML = '';
-            
-            snapshot.forEach((doc) => {
-                displayMessage(doc.data());
-            });
-            
-            // Scroll to bottom
-            setTimeout(() => {
-                messagesContainer.scrollTop = messagesContainer.scrollHeight;
-            }, 100);
-        }, (error) => {
-            console.error('Message listener error:', error);
-            // Fallback for demo users or when Firebase fails
-            if (localStorage.getItem('isDemo')) {
-                displayDemoMessages();
+    if (messageInput && sendButton) {
+        // Send message on button click
+        sendButton.addEventListener('click', sendMessage);
+        
+        // Send message on Enter key
+        messageInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
             }
         });
+        
+        // Typing indicator
+        messageInput.addEventListener('input', function() {
+            if (!isTyping) {
+                isTyping = true;
+                // In a real app, you would emit a typing event to server
+            }
+            
+            clearTimeout(typingTimeout);
+            typingTimeout = setTimeout(() => {
+                isTyping = false;
+                // In a real app, you would emit a stop typing event
+            }, 1000);
+            
+            // Simulate other users typing
+            if (Math.random() > 0.7) {
+                simulateTyping();
+            }
+        });
+        
+        // Auto-resize textarea
+        messageInput.addEventListener('input', function() {
+            autoResize(this);
+        });
+    }
 }
 
-// Display demo messages (fallback)
-function displayDemoMessages() {
-    const demoMessages = [
-        {
-            text: "Welcome to Galactic Chat!",
-            senderName: "System",
-            timestamp: { toDate: () => new Date(Date.now() - 300000) }
-        },
-        {
-            text: "This is running in demo mode",
-            senderName: "System",
-            timestamp: { toDate: () => new Date(Date.now() - 240000) }
-        },
-        {
-            text: "Try registering for full features!",
-            senderName: "System",
-            timestamp: { toDate: () => new Date(Date.now() - 180000) }
-        }
-    ];
+// Load initial messages
+function loadInitialMessages() {
+    const messagesContainer = document.getElementById('messages');
+    const loadingDiv = messagesContainer.querySelector('.loading');
     
-    demoMessages.forEach(msg => displayMessage(msg));
+    if (loadingDiv) {
+        loadingDiv.remove();
+    }
+    
+    // Display demo messages
+    demoMessages.forEach(message => {
+        displayMessage(message);
+    });
+    
+    // Scroll to bottom
+    setTimeout(() => {
+        scrollToBottom();
+    }, 100);
 }
 
-// Display a single message
+// Display a message
 function displayMessage(message) {
+    const messagesContainer = document.getElementById('messages');
+    
+    // Convert timestamp string to Date object
+    const timestamp = message.timestamp ? new Date(message.timestamp) : new Date();
+    
     const messageDiv = document.createElement('div');
-    const isOwn = message.senderId === currentUser?.uid;
-    messageDiv.className = `message ${isOwn ? 'own' : ''}`;
     
-    const time = message.timestamp ? 
-        new Date(message.timestamp.toDate()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 
-        'Just now';
+    // Check if message is from current user
+    const isCurrentUser = message.senderName === localStorage.getItem('userName') ||
+                         message.senderName === localStorage.getItem('userEmail')?.split('@')[0];
     
-    messageDiv.innerHTML = `
-        ${!isOwn ? `<div class="sender">${message.senderName || 'Unknown'}</div>` : ''}
-        <div class="text">${escapeHtml(message.text)}</div>
-        <div class="time">${time}</div>
-    `;
+    messageDiv.className = `message ${isCurrentUser ? 'own' : ''} ${message.type === 'system' ? 'system' : ''}`;
+    
+    if (message.type === 'system') {
+        messageDiv.innerHTML = `
+            <div class="text">${escapeHtml(message.text)}</div>
+            <div class="time">${formatTime(timestamp)}</div>
+        `;
+    } else {
+        messageDiv.innerHTML = `
+            ${!isCurrentUser ? `
+                <div class="message-header">
+                    <img src="${message.senderAvatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=default'}" 
+                         class="message-avatar" alt="${message.senderName}">
+                    <div class="sender">${escapeHtml(message.senderName)}</div>
+                </div>
+            ` : ''}
+            <div class="text">${escapeHtml(message.text)}</div>
+            <div class="time">${formatTime(timestamp)}</div>
+        `;
+    }
     
     messagesContainer.appendChild(messageDiv);
 }
 
-// Setup online users listener
-function setupOnlineUsers() {
-    if (localStorage.getItem('isDemo')) {
-        // Demo mode: show random online count
-        onlineCountElement.textContent = `Online: ${Math.floor(Math.random() * 20) + 5}`;
-        return;
-    }
-    
-    if (unsubscribeOnline) unsubscribeOnline();
-    
-    unsubscribeOnline = db.collection('users')
-        .where('online', '==', true)
-        .onSnapshot((snapshot) => {
-            const onlineCount = snapshot.size;
-            onlineCountElement.textContent = `Online: ${onlineCount}`;
-        }, (error) => {
-            console.error('Online users listener error:', error);
-            onlineCountElement.textContent = 'Online: --';
-        });
-}
-
-// Setup message input handling
-function setupMessageInput() {
-    sendButton.addEventListener('click', sendMessage);
-    
-    messageInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            sendMessage();
-        }
-    });
-    
-    messageInput.focus();
-}
-
-// Send message function
-async function sendMessage() {
+// Send message
+function sendMessage() {
+    const messageInput = document.getElementById('msg');
     const text = messageInput.value.trim();
     
     if (!text) return;
     
-    const originalButtonText = sendButton.textContent;
-    messageInput.disabled = true;
-    sendButton.disabled = true;
-    sendButton.textContent = 'SENDING...';
+    // Get current user info
+    const currentUser = {
+        uid: localStorage.getItem('uid'),
+        name: localStorage.getItem('userName') || 'Pilot',
+        avatar: localStorage.getItem('userAvatar') || 
+                `https://api.dicebear.com/7.x/avataaars/svg?seed=${localStorage.getItem('uid')}`
+    };
     
-    try {
-        // For demo users, just display locally
-        if (localStorage.getItem('isDemo')) {
-            const demoMessage = {
-                text: text,
-                senderId: currentUser.uid,
-                senderName: userProfile.displayName,
-                senderAvatar: userProfile.avatar,
-                roomId: roomId,
-                timestamp: { toDate: () => new Date() }
-            };
-            
-            // Add to messages locally
-            displayMessage(demoMessage);
-            messageInput.value = '';
-            
-            // Simulate receiving a response
-            setTimeout(() => {
-                const responses = [
-                    "Roger that!",
-                    "Copy that, pilot!",
-                    "Message received loud and clear!",
-                    "May the Force be with you!",
-                    "I've got a bad feeling about this..."
-                ];
-                const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-                
-                const responseMessage = {
-                    text: randomResponse,
-                    senderId: 'system_' + Date.now(),
-                    senderName: 'System',
-                    roomId: roomId,
-                    timestamp: { toDate: () => new Date() }
-                };
-                
-                displayMessage(responseMessage);
-            }, 1000);
-            
-        } else {
-            // Regular Firebase message
-            const message = {
-                text: text,
-                senderId: currentUser.uid,
-                senderName: userProfile.displayName || currentUser.email?.split('@')[0] || 'User',
-                senderAvatar: userProfile.avatar,
-                roomId: roomId,
-                timestamp: new Date()
-            };
-            
-            await db.collection('messages').add(message);
-            messageInput.value = '';
-        }
-        
-    } catch (error) {
-        console.error('Error sending message:', error);
-        alert('Failed to send message. Please try again.');
-    } finally {
-        messageInput.disabled = false;
-        sendButton.disabled = false;
-        sendButton.textContent = originalButtonText;
-        messageInput.focus();
+    // Create message object
+    const message = {
+        id: `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        text: text,
+        senderName: currentUser.name,
+        senderAvatar: currentUser.avatar,
+        senderId: currentUser.uid,
+        timestamp: new Date().toISOString(),
+        type: 'user'
+    };
+    
+    // Display message immediately
+    displayMessage(message);
+    
+    // Add to demo messages
+    demoMessages.push(message);
+    localStorage.setItem('demoMessages', JSON.stringify(demoMessages));
+    
+    // Clear input
+    messageInput.value = '';
+    autoResize(messageInput);
+    
+    // Scroll to bottom
+    scrollToBottom();
+    
+    // Simulate response after delay
+    setTimeout(() => {
+        simulateStarWarsResponse();
+    }, 1000 + Math.random() * 2000);
+}
+
+// Simulate Star Wars character response
+function simulateStarWarsResponse() {
+    const randomCharacter = STAR_WARS_RESPONSES[Math.floor(Math.random() * STAR_WARS_RESPONSES.length)];
+    const randomResponse = randomCharacter.responses[Math.floor(Math.random() * randomCharacter.responses.length)];
+    
+    const message = {
+        id: `char_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        text: randomResponse,
+        senderName: randomCharacter.name,
+        senderAvatar: randomCharacter.avatar,
+        timestamp: new Date().toISOString(),
+        type: 'character'
+    };
+    
+    // Add to demo messages
+    demoMessages.push(message);
+    localStorage.setItem('demoMessages', JSON.stringify(demoMessages));
+    
+    // Display message
+    displayMessage(message);
+    scrollToBottom();
+}
+
+// Simulate typing indicator
+function simulateTyping() {
+    const typingIndicator = document.getElementById('typingIndicator');
+    const typingUser = document.getElementById('typingUser');
+    
+    if (!typingIndicator || !typingUser) return;
+    
+    const randomCharacter = STAR_WARS_RESPONSES[Math.floor(Math.random() * STAR_WARS_RESPONSES.length)];
+    
+    typingUser.textContent = `${randomCharacter.name} is typing...`;
+    typingIndicator.style.display = 'flex';
+    
+    setTimeout(() => {
+        typingIndicator.style.display = 'none';
+    }, 2000 + Math.random() * 2000);
+}
+
+// Format time
+function formatTime(date) {
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
+// Auto-resize textarea
+function autoResize(textarea) {
+    textarea.style.height = 'auto';
+    textarea.style.height = Math.min(textarea.scrollHeight, 150) + 'px';
+}
+
+// Scroll to bottom
+function scrollToBottom() {
+    const messagesContainer = document.getElementById('messages');
+    if (messagesContainer) {
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
 }
 
-// Setup page visibility handler
-function setupVisibilityHandler() {
-    document.addEventListener('visibilitychange', async () => {
-        if (document.hidden && !localStorage.getItem('isDemo')) {
-            await updateOnlineStatus(false);
-        } else if (!document.hidden && !localStorage.getItem('isDemo')) {
-            await updateOnlineStatus(true);
-        }
-    });
-    
-    window.addEventListener('beforeunload', async () => {
-        if (!localStorage.getItem('isDemo')) {
-            await updateOnlineStatus(false);
-        }
-    });
-}
-
-// Update user's online status
-async function updateOnlineStatus(online) {
-    if (!currentUser || localStorage.getItem('isDemo')) return;
-    
-    try {
-        await db.collection('users').doc(currentUser.uid).update({
-            online: online,
-            lastSeen: new Date()
-        });
-    } catch (error) {
-        console.error('Error updating online status:', error);
-    }
-}
-
-// Switch theme (Jedi/Sith)
-async function switchSide(side) {
-    document.body.dataset.theme = side;
-    localStorage.setItem('theme', side);
-    
-    if (currentUser && !localStorage.getItem('isDemo')) {
-        try {
-            await db.collection('users').doc(currentUser.uid).update({
-                theme: side
-            });
-            if (userProfile) userProfile.theme = side;
-        } catch (error) {
-            console.error('Error saving theme:', error);
-        }
-    }
-}
-
-// Logout function
-async function logout() {
-    try {
-        if (!localStorage.getItem('isDemo')) {
-            if (currentUser) {
-                await updateOnlineStatus(false);
-            }
-            
-            if (unsubscribeMessages) unsubscribeMessages();
-            if (unsubscribeOnline) unsubscribeOnline();
-            
-            await auth.signOut();
-        }
-        
-        // Clear all storage
-        localStorage.removeItem('uid');
-        localStorage.removeItem('userEmail');
-        localStorage.removeItem('userName');
-        localStorage.removeItem('userAvatar');
-        localStorage.removeItem('isDemo');
-        localStorage.removeItem('theme');
-        
-        window.location.href = 'login.html';
-        
-    } catch (error) {
-        console.error('Logout error:', error);
-        window.location.href = 'login.html';
-    }
-}
-
-// Helper function to escape HTML
+// Escape HTML for security
 function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
 }
 
-// Override the placeholder functions
-window.send = sendMessage;
-window.switchSide = switchSide;
-window.logout = logout;
+// Add system message
+function addSystemMessage(text) {
+    const messagesContainer = document.getElementById('messages');
+    
+    const message = {
+        id: `sys_${Date.now()}`,
+        text: text,
+        senderName: 'System',
+        timestamp: new Date().toISOString(),
+        type: 'system'
+    };
+    
+    demoMessages.push(message);
+    localStorage.setItem('demoMessages', JSON.stringify(demoMessages));
+    
+    displayMessage(message);
+    scrollToBottom();
+}
 
-// Initialize chat when page loads
-window.addEventListener('DOMContentLoaded', initChat);
-
-// Handle Firebase auth state changes (for non-demo users)
-if (!localStorage.getItem('isDemo')) {
-    auth.onAuthStateChanged((user) => {
-        if (!user && window.location.pathname.endsWith('index.html')) {
-            // If user is not logged in and not in demo mode, redirect to login
-            window.location.href = 'login.html';
+// Update user profile (called from index.html)
+function updateUserProfile(name, avatar) {
+    if (name) {
+        localStorage.setItem('userName', name);
+        document.getElementById('userName').textContent = name;
+    }
+    
+    if (avatar) {
+        localStorage.setItem('userAvatar', avatar);
+        document.getElementById('userAvatar').src = avatar;
+    }
+    
+    // Update all user's messages with new name/avatar
+    demoMessages.forEach((msg, index) => {
+        if (msg.senderId === localStorage.getItem('uid')) {
+            demoMessages[index] = {
+                ...msg,
+                senderName: name || msg.senderName,
+                senderAvatar: avatar || msg.senderAvatar
+            };
         }
     });
+    
+    localStorage.setItem('demoMessages', JSON.stringify(demoMessages));
+    
+    // Refresh messages display
+    const messagesContainer = document.getElementById('messages');
+    messagesContainer.innerHTML = '';
+    loadInitialMessages();
 }
+
+// Make functions available globally
+window.sendMessage = sendMessage;
+window.addSystemMessage = addSystemMessage;
+window.updateUserProfile = updateUserProfile;
+window.autoResize = autoResize;
+window.scrollToBottom = scrollToBottom;
