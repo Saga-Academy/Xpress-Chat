@@ -6,6 +6,7 @@
 <title>Xpress Chat | Galactic Gateway</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Rajdhani:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
   * {
     margin: 0;
@@ -17,8 +18,8 @@
     font-family: 'Rajdhani', sans-serif;
     background: #000;
     color: #fff;
-    height: 100vh;
-    overflow: hidden;
+    min-height: 100vh;
+    overflow-y: auto;
     position: relative;
   }
 
@@ -59,8 +60,8 @@
   .login-container {
     position: relative;
     z-index: 3;
-    max-width: 400px;
-    margin: 100px auto;
+    max-width: 500px;
+    margin: 50px auto;
     padding: 2rem;
     background: rgba(0, 20, 40, 0.85);
     backdrop-filter: blur(10px);
@@ -72,7 +73,7 @@
   .login-container h2 {
     font-family: 'Orbitron', sans-serif;
     text-align: center;
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
     color: #00aaff;
     font-size: 2rem;
     text-shadow: 0 0 10px #00aaff;
@@ -81,8 +82,8 @@
   .login-container h3 {
     font-family: 'Orbitron', sans-serif;
     text-align: center;
-    margin-bottom: 1rem;
-    color: #00aaff;
+    margin-bottom: 1.5rem;
+    color: #88ccff;
     font-size: 1.2rem;
   }
 
@@ -96,6 +97,7 @@
     color: white;
     font-size: 1rem;
     font-family: 'Rajdhani', sans-serif;
+    transition: all 0.3s;
   }
 
   .login-container input::placeholder {
@@ -104,8 +106,9 @@
 
   .login-container input:focus {
     outline: none;
-    box-shadow: 0 0 10px #00aaff;
+    box-shadow: 0 0 15px #00aaff;
     background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-1px);
   }
 
   .login-container button {
@@ -119,10 +122,14 @@
     font-weight: bold;
     cursor: pointer;
     transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
   }
 
   .login-container button.primary {
-    background: #00aaff;
+    background: linear-gradient(135deg, #00aaff, #0066cc);
     color: white;
   }
 
@@ -134,26 +141,42 @@
 
   .login-container button:hover {
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 170, 255, 0.4);
+    box-shadow: 0 8px 20px rgba(0, 170, 255, 0.4);
+  }
+
+  .login-container button:active {
+    transform: translateY(0);
   }
 
   .message {
-    padding: 10px;
+    padding: 12px;
     margin: 10px 0;
     border-radius: 5px;
     text-align: center;
     font-weight: bold;
+    animation: slideDown 0.3s ease-out;
+  }
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   .error {
     background: rgba(255, 0, 0, 0.2);
-    color: #ff6666;
+    color: #ff8888;
     border: 1px solid #ff6666;
   }
 
   .success {
-    background: rgba(0, 255, 0, 0.2);
-    color: #66ff66;
+    background: rgba(0, 255, 100, 0.2);
+    color: #88ff88;
     border: 1px solid #66ff66;
   }
 
@@ -171,56 +194,134 @@
     to { transform: rotate(360deg); }
   }
 
+  /* Demo Accounts Section */
   .demo-section {
-    margin-top: 20px;
-    padding: 15px;
-    background: rgba(0, 170, 255, 0.1);
-    border-radius: 5px;
-    border: 1px solid #00aaff;
+    margin-top: 25px;
+    padding: 20px;
+    background: rgba(0, 170, 255, 0.08);
+    border-radius: 8px;
+    border: 1px solid rgba(0, 170, 255, 0.3);
+    backdrop-filter: blur(5px);
   }
 
-  .demo-buttons {
+  .demo-section h4 {
+    color: #00aaff;
+    margin-bottom: 15px;
+    font-family: 'Orbitron', sans-serif;
+    text-align: center;
+    font-size: 1.1rem;
+  }
+
+  .demo-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-top: 15px;
+  }
+
+  .demo-account {
     display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
-    margin-top: 10px;
-  }
-
-  .demo-buttons button {
-    padding: 8px 12px;
-    background: rgba(0, 170, 255, 0.2);
-    border: 1px solid #00aaff;
-    border-radius: 3px;
-    color: white;
-    font-size: 0.8rem;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 15px;
+    background: rgba(0, 170, 255, 0.15);
+    border: 1px solid rgba(0, 170, 255, 0.3);
+    border-radius: 5px;
     cursor: pointer;
-    flex: 1;
-    min-width: 120px;
+    transition: all 0.3s;
   }
 
-  .demo-buttons button:hover {
-    background: rgba(0, 170, 255, 0.3);
-    transform: translateY(-1px);
+  .demo-account:hover {
+    background: rgba(0, 170, 255, 0.25);
+    transform: translateY(-2px);
+    border-color: #00aaff;
+  }
+
+  .demo-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #00aaff;
+    object-fit: cover;
+  }
+
+  .demo-info {
+    flex: 1;
+  }
+
+  .demo-name {
+    color: white;
+    font-weight: bold;
+    font-size: 0.9rem;
+  }
+
+  .demo-email {
+    color: #88ccff;
+    font-size: 0.8rem;
   }
 
   .signup-link {
     text-align: center;
-    margin-top: 20px;
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(0, 170, 255, 0.3);
   }
 
   .signup-link a {
     color: #00aaff;
     text-decoration: none;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s;
   }
 
   .signup-link a:hover {
-    text-decoration: underline;
+    color: #88ddff;
+    text-shadow: 0 0 10px rgba(0, 170, 255, 0.5);
+  }
+
+  .password-toggle {
+    position: relative;
+  }
+
+  .toggle-icon {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #88ccff;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .toggle-icon:hover {
+    color: #00aaff;
+  }
+
+  .logo {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .logo h1 {
+    font-family: 'Orbitron', sans-serif;
+    color: #00aaff;
+    font-size: 2.5rem;
+    text-shadow: 0 0 20px rgba(0, 170, 255, 0.8);
+    margin-bottom: 5px;
+  }
+
+  .logo p {
+    color: #88ccff;
+    font-size: 0.9rem;
+    letter-spacing: 2px;
   }
 
   @media (max-width: 600px) {
     .login-container {
-      margin: 50px 20px;
+      margin: 20px 15px;
       padding: 1.5rem;
     }
     
@@ -228,8 +329,30 @@
       font-size: 1.5rem;
     }
     
-    .demo-buttons button {
-      min-width: 100px;
+    .logo h1 {
+      font-size: 2rem;
+    }
+    
+    .demo-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .demo-account {
+      padding: 8px 12px;
+    }
+  }
+
+  @media (max-width: 400px) {
+    .login-container {
+      padding: 1rem;
+    }
+    
+    .login-container h2 {
+      font-size: 1.3rem;
+    }
+    
+    .logo h1 {
+      font-size: 1.8rem;
     }
   }
 </style>
@@ -241,69 +364,152 @@
 <div class="stars" id="starsContainer"></div>
 
 <div class="login-container">
-  <h2>GALACTIC ACCESS</h2>
-  <h3>Authorization Required</h3>
+  <div class="logo">
+    <h1>GALACTIC CHAT</h1>
+    <p>SECURE COMMUNICATION NETWORK</p>
+  </div>
 
-  <input type="email" id="email" placeholder="Registered Pilot Email">
-  <input type="password" id="password" placeholder="Holo-Key (Password)">
+  <h3>AUTHORIZATION REQUIRED</h3>
 
-  <button class="primary" onclick="handleLogin()">AUTHORIZE ENTRY</button>
+  <input type="email" id="email" placeholder="📧 Registered Pilot Email" required>
+  
+  <div class="password-toggle">
+    <input type="password" id="password" placeholder="🔑 Holo-Key (Password)" required>
+    <span class="toggle-icon" id="togglePassword">
+      <i class="fas fa-eye"></i>
+    </span>
+  </div>
+
+  <button class="primary" onclick="handleLogin()">
+    <i class="fas fa-sign-in-alt"></i> AUTHORIZE ENTRY
+  </button>
 
   <div class="demo-section">
-    <h3>Quick Demo Login</h3>
-    <p style="font-size: 0.9rem; color: #88ccff; margin-bottom: 10px;">
-      Try our demo accounts (click to auto-fill):
+    <h4><i class="fas fa-rocket"></i> QUICK DEMO ACCESS</h4>
+    <p style="font-size: 0.9rem; color: #88ccff; margin-bottom: 10px; text-align: center;">
+      Select a demo character to auto-fill credentials:
     </p>
-    <div class="demo-buttons">
-      <button onclick="fillDemoAccount('luke@jedi.com', 'force123')">Luke Skywalker</button>
-      <button onclick="fillDemoAccount('leia@rebel.com', 'princess123')">Princess Leia</button>
-      <button onclick="fillDemoAccount('han@falcon.com', 'nerf123')">Han Solo</button>
-      <button onclick="fillDemoAccount('darth@sith.com', 'vader123')">Darth Vader</button>
-      <button onclick="fillDemoAccount('yoda@jedi.com', 'master123')">Master Yoda</button>
-      <button onclick="fillDemoAccount('obiwan@jedi.com', 'hello123')">Obi-Wan</button>
+    <div class="demo-grid" id="demoAccountsGrid">
+      <!-- Demo accounts will be loaded here -->
     </div>
   </div>
 
   <div class="signup-link">
-    <a href="signup.html">New pilot? Register here →</a>
+    <a href="signup.html">
+      <i class="fas fa-user-plus"></i> New to the fleet? Register as a pilot
+    </a>
   </div>
 </div>
 
 <script>
+  // Demo accounts with avatars
+  const DEMO_ACCOUNTS = [
+    { 
+      email: "luke@jedi.com", 
+      password: "force123", 
+      name: "Luke Skywalker",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=luke&backgroundColor=00aaff&hair=short"
+    },
+    { 
+      email: "leia@rebel.com", 
+      password: "princess123", 
+      name: "Princess Leia",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=leia&backgroundColor=ff66aa&hair=bun"
+    },
+    { 
+      email: "han@falcon.com", 
+      password: "nerf123", 
+      name: "Han Solo",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=han&backgroundColor=333333&hair=short"
+    },
+    { 
+      email: "darth@sith.com", 
+      password: "vader123", 
+      name: "Darth Vader",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=vader&backgroundColor=ff2222&accessories=sunglasses"
+    },
+    { 
+      email: "yoda@jedi.com", 
+      password: "master123", 
+      name: "Master Yoda",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=yoda&backgroundColor=00ff88&skinColor=f9d9ab"
+    },
+    { 
+      email: "obiwan@jedi.com", 
+      password: "hello123", 
+      name: "Obi-Wan Kenobi",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=obiwan&backgroundColor=00aaff&hair=long&facialHair=beard"
+    }
+  ];
+
   // Create stars animation
   function createStars() {
     const container = document.getElementById('starsContainer');
-    const starCount = 200;
+    const starCount = 150;
     
     for (let i = 0; i < starCount; i++) {
       const star = document.createElement('div');
       star.classList.add('star');
       
-      // Random position
       const x = Math.random() * 100;
       const y = Math.random() * 100;
-      
-      // Random size
-      const size = Math.random() * 2 + 0.5;
-      
-      // Random animation delay
+      const size = Math.random() * 3 + 0.5;
       const delay = Math.random() * 3;
+      const duration = Math.random() * 2 + 1;
       
       star.style.left = `${x}%`;
       star.style.top = `${y}%`;
       star.style.width = `${size}px`;
       star.style.height = `${size}px`;
       star.style.animationDelay = `${delay}s`;
+      star.style.animationDuration = `${duration}s`;
       
       container.appendChild(star);
     }
   }
 
+  // Load demo accounts
+  function loadDemoAccounts() {
+    const grid = document.getElementById('demoAccountsGrid');
+    grid.innerHTML = '';
+    
+    DEMO_ACCOUNTS.forEach(account => {
+      const demoDiv = document.createElement('div');
+      demoDiv.className = 'demo-account';
+      demoDiv.onclick = () => fillDemoAccount(account.email, account.password, account.name);
+      
+      demoDiv.innerHTML = `
+        <img src="${account.avatar}" class="demo-avatar" alt="${account.name}">
+        <div class="demo-info">
+          <div class="demo-name">${account.name}</div>
+          <div class="demo-email">${account.email}</div>
+        </div>
+        <i class="fas fa-chevron-right" style="color: #00aaff;"></i>
+      `;
+      
+      grid.appendChild(demoDiv);
+    });
+  }
+
   // Fill demo account details
-  function fillDemoAccount(email, password) {
+  function fillDemoAccount(email, password, name = '') {
     document.getElementById('email').value = email;
     document.getElementById('password').value = password;
-    showMessage(`Demo account loaded. Click "AUTHORIZE ENTRY" to login.`, 'success');
+    showMessage(`${name} credentials loaded. Click "AUTHORIZE ENTRY" to login.`, 'success');
+  }
+
+  // Toggle password visibility
+  function togglePasswordVisibility() {
+    const passwordInput = document.getElementById('password');
+    const toggleIcon = document.getElementById('togglePassword');
+    
+    if (passwordInput.type === 'password') {
+      passwordInput.type = 'text';
+      toggleIcon.innerHTML = '<i class="fas fa-eye-slash"></i>';
+    } else {
+      passwordInput.type = 'password';
+      toggleIcon.innerHTML = '<i class="fas fa-eye"></i>';
+    }
   }
 
   // Show message function
@@ -316,30 +522,40 @@
     msgDiv.textContent = message;
     
     const container = document.querySelector('.login-container');
-    const buttons = container.querySelectorAll('button');
-    container.insertBefore(msgDiv, buttons[0]);
+    const demoSection = container.querySelector('.demo-section');
+    container.insertBefore(msgDiv, demoSection);
     
     if (type !== 'error') {
       setTimeout(() => msgDiv.remove(), 5000);
     }
   }
 
-  // Make functions globally available
-  window.fillDemoAccount = fillDemoAccount;
-  window.showMessage = showMessage;
-
-  // Initialize stars on page load
+  // Initialize on page load
   document.addEventListener('DOMContentLoaded', () => {
     createStars();
+    loadDemoAccounts();
     document.getElementById('email').focus();
     
-    // Enable Enter key for login
+    // Setup password toggle
+    document.getElementById('togglePassword').addEventListener('click', togglePasswordVisibility);
+    
+    // Setup Enter key for login
     document.getElementById('password').addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
         handleLogin();
       }
     });
+    
+    // Auto-focus email if empty
+    if (!document.getElementById('email').value) {
+      document.getElementById('email').focus();
+    }
   });
+
+  // Make functions globally available
+  window.fillDemoAccount = fillDemoAccount;
+  window.showMessage = showMessage;
+  window.togglePasswordVisibility = togglePasswordVisibility;
 </script>
 
 <script type="module" src="./js/auth.js"></script>
