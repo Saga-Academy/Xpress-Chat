@@ -17,6 +17,11 @@
         .toggle-switch { transition: all 0.3s ease; }
         .toggle-switch.active { background: linear-gradient(45deg, #10B981, #0EA5E9); }
         .stats-card { background: linear-gradient(135deg, #10B981, #0EA5E9); }
+        .profile-avatar { transition: all 0.3s ease; }
+        .profile-avatar:hover { transform: scale(1.05); }
+        .upload-area { border: 2px dashed #D1D5DB; transition: all 0.3s ease; }
+        .upload-area:hover { border-color: #10B981; background-color: #F0FDF4; }
+        .upload-area.dragover { border-color: #10B981; background-color: #F0FDF4; }
     </style>
 </head>
 <body class="bg-gray-50 h-screen overflow-hidden">
@@ -38,7 +43,7 @@
             <div class="text-center">
                 <div class="relative inline-block mb-4">
                     <img id="profileAvatar" src="https://kimi-web-img.moonshot.cn/img/img.freepik.com/33796f1de011459bb90b9e8caae24265fb5e00a4.jpg" 
-                         alt="Profile" class="w-24 h-24 rounded-full object-cover mx-auto border-4 border-emerald-500">
+                         alt="Profile" class="w-24 h-24 rounded-full object-cover mx-auto border-4 border-emerald-500 profile-avatar">
                     <button id="changeAvatarBtn" class="absolute bottom-0 right-0 bg-emerald-500 text-white p-2 rounded-full hover:bg-emerald-600 transition-colors">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
@@ -255,23 +260,63 @@
         <div class="bg-white rounded-lg w-full max-w-md">
             <div class="p-6">
                 <h3 class="text-lg font-semibold mb-4">Edit Profile</h3>
-                <div class="space-y-4">
+                <form id="editProfileForm" class="space-y-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Name</label>
                         <input type="text" id="editNameInput" value="Alex Johnson" 
                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Status/Bio</label>
                         <input type="text" id="editStatusInput" value="Software Developer • San Francisco, CA" 
                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
                     </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Phone</label>
+                        <input type="tel" id="editPhoneInput" value="+1 (555) 123-4567" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Location</label>
+                        <input type="text" id="editLocationInput" value="San Francisco, CA" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                    </div>
                     <div class="flex space-x-3">
-                        <button id="cancelEditBtn" class="flex-1 px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors">
+                        <button type="button" id="cancelEditBtn" class="flex-1 px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors">
                             Cancel
                         </button>
-                        <button id="saveEditBtn" class="flex-1 px-4 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors">
+                        <button type="submit" class="flex-1 px-4 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors">
                             Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Avatar Upload Modal -->
+    <div id="avatarUploadModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-lg w-full max-w-md">
+            <div class="p-6">
+                <h3 class="text-lg font-semibold mb-4">Change Profile Picture</h3>
+                <div class="space-y-4">
+                    <div class="upload-area rounded-lg p-8 text-center cursor-pointer" id="uploadArea">
+                        <svg class="w-12 h-12 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                        </svg>
+                        <p class="text-sm text-gray-600 mb-2">Click to upload or drag and drop</p>
+                        <p class="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
+                        <input type="file" id="avatarInput" accept="image/*" class="hidden">
+                    </div>
+                    <div id="imagePreview" class="hidden">
+                        <img id="previewImg" src="" alt="Preview" class="w-32 h-32 rounded-full mx-auto object-cover">
+                    </div>
+                    <div class="flex space-x-3">
+                        <button type="button" id="cancelAvatarBtn" class="flex-1 px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors">
+                            Cancel
+                        </button>
+                        <button type="button" id="saveAvatarBtn" class="flex-1 px-4 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors">
+                            Save Picture
                         </button>
                     </div>
                 </div>
@@ -314,6 +359,7 @@
         // Profile page specific functionality
         class ProfileManager {
             constructor() {
+                this.currentUser = null;
                 this.settings = {
                     profileVisibility: true,
                     readReceipts: true,
@@ -327,10 +373,22 @@
             }
 
             init() {
+                this.loadCurrentUser();
                 this.loadSettings();
                 this.setupEventListeners();
+                this.renderUserProfile();
                 this.renderUsageChart();
                 this.initAnimations();
+            }
+
+            loadCurrentUser() {
+                const savedUser = localStorage.getItem('chatapp_current_user');
+                if (savedUser) {
+                    this.currentUser = JSON.parse(savedUser);
+                } else {
+                    // Redirect to login if no user
+                    window.location.href = 'login.html';
+                }
             }
 
             loadSettings() {
@@ -356,10 +414,44 @@
                 // Edit profile
                 document.getElementById('editProfileBtn').addEventListener('click', () => this.showEditModal());
                 document.getElementById('cancelEditBtn').addEventListener('click', () => this.hideEditModal());
-                document.getElementById('saveEditBtn').addEventListener('click', () => this.saveProfile());
+                document.getElementById('editProfileForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.saveProfile();
+                });
 
                 // Change avatar
-                document.getElementById('changeAvatarBtn').addEventListener('click', () => this.changeAvatar());
+                document.getElementById('changeAvatarBtn').addEventListener('click', () => this.showAvatarModal());
+                document.getElementById('cancelAvatarBtn').addEventListener('click', () => this.hideAvatarModal());
+                document.getElementById('saveAvatarBtn').addEventListener('click', () => this.saveAvatar());
+
+                // Avatar upload
+                document.getElementById('uploadArea').addEventListener('click', () => {
+                    document.getElementById('avatarInput').click();
+                });
+
+                document.getElementById('avatarInput').addEventListener('change', (e) => {
+                    this.handleAvatarUpload(e);
+                });
+
+                // Drag and drop
+                const uploadArea = document.getElementById('uploadArea');
+                uploadArea.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    uploadArea.classList.add('dragover');
+                });
+
+                uploadArea.addEventListener('dragleave', () => {
+                    uploadArea.classList.remove('dragover');
+                });
+
+                uploadArea.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    uploadArea.classList.remove('dragover');
+                    const files = e.dataTransfer.files;
+                    if (files.length > 0) {
+                        this.handleAvatarFile(files[0]);
+                    }
+                });
 
                 // Action buttons
                 document.getElementById('exportDataBtn').addEventListener('click', () => this.exportData());
@@ -367,12 +459,27 @@
                 document.getElementById('deleteAccountBtn').addEventListener('click', () => this.deleteAccount());
 
                 // Other settings buttons
-                document.querySelectorAll('.p-3.rounded-lg.hover\\:bg-gray-100').forEach(btn => {
+                document.querySelectorAll('.p-3.rounded-lg.hover\\:bg-gray-50').forEach(btn => {
                     btn.addEventListener('click', () => {
                         const title = btn.querySelector('h4').textContent;
                         this.showComingSoon(title);
                     });
                 });
+            }
+
+            renderUserProfile() {
+                if (!this.currentUser) return;
+
+                document.getElementById('profileAvatar').src = this.currentUser.avatar;
+                document.getElementById('profileName').textContent = this.currentUser.name;
+                document.getElementById('profileStatus').textContent = this.currentUser.status || 'Software Developer • San Francisco, CA';
+                
+                // Update contact info
+                const phoneSpan = document.querySelector('.flex.justify-center.space-x-4.text-sm.text-gray-500 span:first-child');
+                const emailSpan = document.querySelector('.flex.justify-center.space-x-4.text-sm.text-gray-500 span:last-child');
+                
+                if (phoneSpan) phoneSpan.textContent = `📱 ${this.currentUser.phone || '+1 (555) 123-4567'}`;
+                if (emailSpan) emailSpan.textContent = `📧 ${this.currentUser.email}`;
             }
 
             toggleSetting(toggle) {
@@ -426,6 +533,13 @@
             }
 
             showEditModal() {
+                if (!this.currentUser) return;
+
+                document.getElementById('editNameInput').value = this.currentUser.name;
+                document.getElementById('editStatusInput').value = this.currentUser.status || 'Software Developer • San Francisco, CA';
+                document.getElementById('editPhoneInput').value = this.currentUser.phone || '+1 (555) 123-4567';
+                document.getElementById('editLocationInput').value = this.currentUser.location || 'San Francisco, CA';
+
                 document.getElementById('editProfileModal').classList.remove('hidden');
                 
                 // Animate modal
@@ -454,44 +568,100 @@
             saveProfile() {
                 const name = document.getElementById('editNameInput').value.trim();
                 const status = document.getElementById('editStatusInput').value.trim();
+                const phone = document.getElementById('editPhoneInput').value.trim();
+                const location = document.getElementById('editLocationInput').value.trim();
                 
                 if (name) {
-                    document.getElementById('profileName').textContent = name;
+                    this.currentUser.name = name;
+                    this.currentUser.status = status;
+                    this.currentUser.phone = phone;
+                    this.currentUser.location = location;
+
+                    // Update localStorage
+                    localStorage.setItem('chatapp_current_user', JSON.stringify(this.currentUser));
+                    
+                    // Update display
+                    this.renderUserProfile();
+                    this.hideEditModal();
+                    this.showNotification('Profile updated successfully!');
                 }
-                
-                if (status) {
-                    document.getElementById('profileStatus').textContent = status;
-                }
-                
-                this.hideEditModal();
-                this.showNotification('Profile updated successfully!');
             }
 
-            changeAvatar() {
-                const avatars = [
-                    'https://kimi-web-img.moonshot.cn/img/tracywrightcorvo.com/45f4a24e606db8c6fc6cb141ab47d93fc9e286a4.jpg',
-                    'https://kimi-web-img.moonshot.cn/img/img.freepik.com/33796f1de011459bb90b9e8caae24265fb5e00a4.jpg',
-                    'https://kimi-web-img.moonshot.cn/img/images.rawpixel.com/068f7bd92911b9f69d6e398f9bbfd11985239fbc.jpg',
-                    'https://kimi-web-img.moonshot.cn/img/headshots-inc.com/8449031380f3d0f96f847f9d90dc2f301a15e9ad.jpg',
-                    'https://kimi-web-img.moonshot.cn/img/www.profilebakery.com/d1b551532dafe7d6076ca545a500f7eafc3a9774.jpg'
-                ];
+            showAvatarModal() {
+                document.getElementById('avatarUploadModal').classList.remove('hidden');
+                document.getElementById('imagePreview').classList.add('hidden');
+                document.getElementById('avatarInput').value = '';
                 
-                const currentAvatar = document.getElementById('profileAvatar').src;
-                const currentIndex = avatars.findIndex(avatar => currentAvatar.includes(avatar.split('/').pop()));
-                const nextIndex = (currentIndex + 1) % avatars.length;
-                
-                // Animate avatar change
+                // Animate modal
                 anime({
-                    targets: '#profileAvatar',
-                    scale: [1, 0.8, 1],
-                    duration: 400,
-                    easing: 'easeInOutQuad',
+                    targets: '#avatarUploadModal .bg-white',
+                    scale: [0.8, 1],
+                    opacity: [0, 1],
+                    duration: 300,
+                    easing: 'easeOutBack'
+                });
+            }
+
+            hideAvatarModal() {
+                anime({
+                    targets: '#avatarUploadModal .bg-white',
+                    scale: [1, 0.8],
+                    opacity: [1, 0],
+                    duration: 200,
+                    easing: 'easeInQuad',
                     complete: () => {
-                        document.getElementById('profileAvatar').src = avatars[nextIndex];
+                        document.getElementById('avatarUploadModal').classList.add('hidden');
                     }
                 });
-                
-                this.showNotification('Avatar updated!');
+            }
+
+            handleAvatarUpload(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    this.handleAvatarFile(file);
+                }
+            }
+
+            handleAvatarFile(file) {
+                // Validate file type
+                if (!file.type.startsWith('image/')) {
+                    this.showNotification('Please select an image file');
+                    return;
+                }
+
+                // Validate file size (10MB max)
+                if (file.size > 10 * 1024 * 1024) {
+                    this.showNotification('File size must be less than 10MB');
+                    return;
+                }
+
+                // Read and preview the file
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const imageUrl = e.target.result;
+                    
+                    // Show preview
+                    document.getElementById('previewImg').src = imageUrl;
+                    document.getElementById('imagePreview').classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+
+            saveAvatar() {
+                const previewImg = document.getElementById('previewImg');
+                if (previewImg.src && !previewImg.src.includes('undefined')) {
+                    this.currentUser.avatar = previewImg.src;
+                    
+                    // Update localStorage
+                    localStorage.setItem('chatapp_current_user', JSON.stringify(this.currentUser));
+                    
+                    // Update display
+                    document.getElementById('profileAvatar').src = this.currentUser.avatar;
+                    this.hideAvatarModal();
+                    this.showNotification('Profile picture updated!');
+                } else {
+                    this.showNotification('Please select an image first');
+                }
             }
 
             exportData() {
@@ -500,15 +670,9 @@
 
             logout() {
                 if (confirm('Are you sure you want to log out?')) {
-                    localStorage.removeItem('chatapp_chats');
-                    localStorage.removeItem('chatapp_messages');
-                    localStorage.removeItem('chatapp_contacts');
-                    localStorage.removeItem('chatapp_settings');
-                    
-                    this.showNotification('Logged out successfully!');
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 1500);
+                    localStorage.removeItem('chatapp_current_user');
+                    localStorage.removeItem('chatapp_remember_me');
+                    window.location.href = 'login.html';
                 }
             }
 
